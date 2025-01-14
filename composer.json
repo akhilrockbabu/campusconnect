@@ -1,0 +1,19 @@
+{
+    "name": "akhil/campusconnect",
+    "description": "CampusConnect Event Management System",
+    "autoload": {
+        "psr-4": {
+            "Akhil\\Campusconnect\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Akhil Rock Babu",
+            "email": "akhilrockbabu@gmail.com"
+        }
+    ],
+    "require": {
+        "mongodb/mongodb": "^1.20",
+        "phpmailer/phpmailer": "^6.9"
+    }
+}

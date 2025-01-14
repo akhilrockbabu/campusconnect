@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Login</title>
+  <link rel="stylesheet" href="css/login_style.css">
+</head>
+<body>
+  <script>
+function validateForm() {
+    const email = document.getElementById("email").value.trim();
+    const username = document.getElementById("username").value.trim();
+    const name = document.getElementById("name").value.trim();
+    const institution = document.getElementById("institution").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirmPassword").value.trim();
+    const profileImage = document.getElementById("profileImage").files[0];
+
+    let errorMessages = [];
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+        errorMessages.push("Email is required.");
+    } else if (!emailPattern.test(email)) {
+        errorMessages.push("Invalid email format.");
+    }
+
+    if (!username) {
+        errorMessages.push("Username is required.");
+    }
+
+    if (!name) {
+        errorMessages.push("Name is required.");
+    }
+
+    if (!institution) {
+        errorMessages.push("Institution name is required.");
+    }
+
+    if (!phone) {
+        errorMessages.push("Phone number is required.");
+    } else if (phone.length < 10 || phone.length > 15) {
+        errorMessages.push("Phone number must be between 10 and 15 digits.");
+    }
+
+    if (!password) {
+        errorMessages.push("Password is required.");
+    } else if (password.length < 8) {
+        errorMessages.push("Password must be at least 8 characters.");
+    }
+
+    if (password !== confirmPassword) {
+        errorMessages.push("Passwords do not match.");
+    }
+
+    if (!profileImage) {
+        errorMessages.push("Profile picture is required.");
+    } else if (!["image/jpeg", "image/png"].includes(profileImage.type)) {
+        errorMessages.push("Profile picture must be a JPEG or PNG file.");
+    }
+
+    if (errorMessages.length > 0) {
+        alert(errorMessages.join("\n"));
+        return false;
+    }
+
+    return true;
+}
+  </script>
+  <div class="container">
+    <input type="checkbox" id="check">
+    <div class="login form">
+      <header>Login</header>
+      <form action="login_process.php" method="post">
+        <input type="text" name="login_username" placeholder="Enter your username">
+        <input type="password" name="login_password" placeholder="Enter your password">
+        <input type="submit" class="button" value="Login">
+      </form>
+      <div class="signup">
+        <span class="signup">Don't have an account?
+         <label for="check">Signup</label>
+        </span>
+      </div>
+    </div>
+    <div class="registration form">
+      <header>Signup</header>
+      <div class="form-scrollable">
+        <form id="signupForm" action="reg_process.php" enctype="multipart/form-data" method="POST" onsubmit="return validateForm()">
+          <input type="text" id="email" name="email" placeholder="Enter your email">
+          <input type="text" id="username" name="username" placeholder="Create a username">
+          <input type="text" id="name" name="name" placeholder="Enter your Name">
+          <input type="text" id="institution" name="institution_name" placeholder="Enter the Institution Name">
+          <input type="number" id="phone" name="phone" placeholder="Enter your Phone Number">
+          <input type="password" id="password" name="password" placeholder="Create a password">
+          <input type="password" id="confirmPassword" placeholder="Confirm your password">
+          <p class="placeholder-style">Upload your Institution ID</p>
+          <input type="file" id="profileImage" name="InstitutionID" accept="image/*" placeholder="Upload your Institution ID">
+          <input type="submit" class="button" value="Signup">
+        </form>
+      </div>
+      <div class="signup">
+        <span class="signup">Already have an account?
+          <label for="check">Login</label>
+        </span>
+      </div>
+    </div> 
+  </div>
+</body>
+</html>

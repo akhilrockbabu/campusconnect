@@ -149,6 +149,7 @@ $username = $_SESSION['username'];
             <nav class="navbar">
                 <a href="#"><button class="nav-btn" id="dashboardBtn">Home</button></a>
                 <a href="create_event.php"><button class="nav-btn" id="dashboardBtn">Create Events</button></a>
+                <a href="approved_events.php"><button class="nav-btn" id="dashboardBtn">Approved Events</button></a>
                 <button class="nav-btn" id="settingsBtn">Update Profile</button>
                 <!-- <button class="nav-btn" id="notificationsBtn">Manage Participants</button> -->
                 <a href="logout.php"><button class="nav-btn" id="dashboardBtn">Logout</button></a>

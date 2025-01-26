@@ -4,45 +4,69 @@ require 'vendor/autoload.php';
 use MongoDB\Client;
 
 $client = new Client("mongodb://localhost:27017");
-$db = $client->campusconnect;
-$collection = $db->users;
+$collection = $client->campusconnect->users;
 
-function sendAlertAndRedirect($message) {
-    echo "<script>
-            alert('$message');
-            window.location.href = 'log_reg.html';
-          </script>";
+function sendAlertAndRedirect($message)
+{
+    echo "<script>alert('$message'); window.location.href='log_reg.html';</script>";
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST")
+{
     $username = $_POST['login_username'];
     $password = $_POST['login_password'];
 
     $user = $collection->findOne(['username' => $username]);
 
-    if ($user) {
-        if (password_verify($password, $user['password'])) {
+    if ($user)
+    {
+        if (password_verify($password, $user['password']))
+        {
             session_start();
             $_SESSION['username'] = $user['username'];
             $_SESSION['role'] = $user['role'];
 
-            if ($user['role'] === 'admin') {
+            if ($user['role'] === 'admin')
+            {
                 header("Location: admin6096.php");
                 exit();
-            } else {
-                if($user['status'] === 'approved') {
+            } 
+            elseif ($user['role'] === 'organizer')
+            {
+                if ($user['status'] === 'approved')
+                {
                     header("Location: organizer81118.php");
                     exit();
-                } else {
-                    sendAlertAndRedirect("You are not approved yet! kindly be patient");
+                } else
+                {
+                    sendAlertAndRedirect("You are not approved yet ! You will recieve an email once approved. Kindly be patient.");
                 }
+            } 
+            elseif ($user['role'] === 'co_organizer')
+            {
+                if ($user['status'] === 'approved') 
+                {
+                    header("Location: coOrganizer2002.php");
+                    exit();
+                } 
+                else 
+                {
+                    sendAlertAndRedirect("You are not approved yet ! You will recieve an email once approved. Kindly be patient.");
+                }
+            } 
+            else 
+            {
+                sendAlertAndRedirect("Invalid role.");
             }
-        } else {
+        } 
+        else 
+        {
             sendAlertAndRedirect("Invalid username or password.");
         }
-    } else {
+    } 
+    else 
+    {
         sendAlertAndRedirect("Invalid username or password.");
     }
-} else {
-    sendAlertAndRedirect("Invalid request.");
 }
+?>

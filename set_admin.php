@@ -3,35 +3,48 @@ require 'vendor/autoload.php';
 
 use MongoDB\Client;
 
-function addAdminToUsers($username, $password, $email) {
+function addAdminToUsers($username, $password, $name, $email) {
     $client = new Client("mongodb://localhost:27017");
     $db = $client->campusconnect;
-    $collection = $db->users;
+    $usersCollection = $db->users;
+    $adminCollection = $db->admin;
 
-    $collection->createIndex(['username' => 1], ['unique' => true]);
+    // Create unique indexes
+    $usersCollection->createIndex(['username' => 1], ['unique' => true]);
+    $adminCollection->createIndex(['username' => 1], ['unique' => true]);
+    $adminCollection->createIndex(['email' => 1], ['unique' => true]);
 
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-    $adminData = [
+    $userData = [
         'username' => $username,
-        'email' => $email,
         'role' => 'admin',
         'password' => $hashedPassword,
         'created_at' => new MongoDB\BSON\UTCDateTime()
     ];
 
+    $adminData = [
+        'username' => $username,
+        'name' => $name,
+        'email' => $email,
+        'created_at' => new MongoDB\BSON\UTCDateTime()
+    ];
+
     try {
-        $result = $collection->insertOne($adminData);
-        echo "Admin added successfully with ID: " . $result->getInsertedId();
+        // Insert into users collection
+        $usersResult = $usersCollection->insertOne($userData);
+        echo "User added successfully with ID: " . $usersResult->getInsertedId() . "<br>";
+
+        // Insert into admin collection
+        $adminResult = $adminCollection->insertOne($adminData);
+        echo "Admin added successfully with ID: " . $adminResult->getInsertedId();
     } catch (MongoDB\Driver\Exception\DuplicateKeyException $e) {
-        echo "Error: Username '" . $username . "' already exists!";
+        echo "Error: Username or Email already exists!";
     } catch (Exception $e) {
         echo "Error: " . $e->getMessage();
     }
 }
 
-$username = 'admin';
-$password = 'hacker@2025';
-$email = 'akhilrockbabu@gmail.com';
-addAdminToUsers($username, $password, $email);
+// Example usage
+addAdminToUsers('admin', 'admin', 'Akhil Rock Babu', 'akhilrockbabu@gmail.com');
 ?>

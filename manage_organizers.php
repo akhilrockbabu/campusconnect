@@ -4,6 +4,7 @@ require 'vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use MongoDB\Client;
 
 session_start();
 
@@ -12,28 +13,28 @@ if (!isset($_SESSION['username']) || $_SESSION['role']!='admin') {
     exit();
 }
 
-$adminUsername = $_SESSION['username'];
-
-// Replace with actual MongoDB query to fetch admin email from the database
-$client = new MongoDB\Client("mongodb://localhost:27017");
+$client = new Client("mongodb://localhost:27017");
 $db = $client->campusconnect;
-$collection = $db->users;
-$adminData = $collection->findOne(['username' => $adminUsername]);
+$usersCollection = $db->users;
+$organizersCollection = $db->organizers;
+$adminCollection = $db->admin;
 
-// Admin email fetched from the database
-$adminEmail = $adminData['email'];
+// Fetch admin email using the username in session variable
+$adminUsername = $_SESSION['username'];
+$admin = $adminCollection->findOne(['username' => $adminUsername]);
+$adminEmail = $admin['email'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'];
     $targetUsername = $_POST['target_username'];
 
     // Fetch target user's email
-    $targetUser = $collection->findOne(['username' => $targetUsername]);
+    $targetUser = $organizersCollection->findOne(['username' => $targetUsername]);
     $targetUserEmail = $targetUser['email'];
 
     if ($action === 'Approve') {
         // Update the user status
-        $collection->updateOne(['username' => $targetUsername], ['$set' => ['status' => 'approved']]);
+        $usersCollection->updateOne(['username' => $targetUsername], ['$set' => ['status' => 'approved']]);
         
         // Send email notification
         $mail = new PHPMailer(true);  // Instantiate PHPMailer
@@ -95,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Remove the user from the database if rejected
-        $collection->deleteOne(['username' => $targetUsername]);
+        $usersCollection->deleteOne(['username' => $targetUsername]);
         $message = 'Organizer has been rejected and removed from the system.';
     }
 
@@ -105,9 +106,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-$filter = ['status' => 'pending'];
-$documents = $collection->find($filter);
+// Fetch all organizers with pending status
+$pendingOrganizers = $usersCollection->find(['role' => 'organizer', 'status' => 'pending']);
 
+$documents = [];
+foreach ($pendingOrganizers as $organizer) {
+    $username = $organizer['username'];
+    $organizerDetails = $organizersCollection->findOne(['username' => $username]);
+    if ($organizerDetails) {
+        $documents[] = [
+            'username' => $username,
+            'name' => $organizerDetails['name'],
+            'email' => $organizerDetails['email'],
+            'institution_id' => $organizerDetails['InstitutionID'],
+            'department' => $organizerDetails['department']
+        ];
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -167,8 +182,7 @@ $documents = $collection->find($filter);
             <tr>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Institution Name</th>
-                <th>Phone</th>
+                <th>Department</th>
                 <th>Institution ID</th>
                 <th>Action</th>
             </tr>
@@ -179,10 +193,9 @@ $documents = $collection->find($filter);
                 echo "<tr>";
                 echo "<td data-th='Name'>" . htmlspecialchars($doc['name']) . "</td>";
                 echo "<td data-th='Email'>" . htmlspecialchars($doc['email']) . "</td>";
-                echo "<td data-th='Institution Name'>" . htmlspecialchars($doc['institution_name']) . "</td>";
-                echo "<td data-th='Phone'>" . htmlspecialchars($doc['phone']) . "</td>";
+                echo "<td data-th='Department'>" . htmlspecialchars($doc['department']) . "</td>";
                 echo "<td data-th='Document Preview'>";
-                echo "<img src='" . htmlspecialchars($doc['Institution_img']) . "' alt='Document Preview' class='img-preview' onclick='toggleImageSize(this)'>";
+                echo "<img src='" . htmlspecialchars($doc['institution_id']) . "' alt='Document Preview' class='img-preview' onclick='toggleImageSize(this)'>";
                 echo "</td>";
                 echo "<td>";
                 echo "<form method='POST' style='display:inline;'>";

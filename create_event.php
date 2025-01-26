@@ -65,7 +65,7 @@
                         <div class="row row-space">
                             <div class="col-2">
                                 <div class="input-group">
-                                    <label class="label">Rules & Info</label>
+                                    <label class="label">Rules & Information</label>
                                     <input class="input--style-4" type="text" name="event_rules">
                                 </div>
                             </div>
@@ -74,7 +74,15 @@
                             <div class="col-2">
                                 <div class="input-group">
                                     <label class="label">Event Date</label>
-                                    <input class="input--style-4" type="date" name="event_date" min="<?php echo $tomorrow; ?>">
+                                    <input class="input--style-4" type="date" name="event_date" min="<?php echo $tomorrow; ?>" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div class="col-2">
+                                <div class="input-group">
+                                    <label class="label">Event Time</label>
+                                    <input class="input--style-4" type="time" name="event_time" required>
                                 </div>
                             </div>
                         </div>
@@ -129,6 +137,7 @@
                             </div>
                         </div>-->
                         <div class="p-t-15">
+                            <input type="hidden" name="form_action" value="create_event">
                             <button class="btn btn--radius-2 btn--blue" type="submit">Submit</button>
                         </div>
                     </form>

@@ -3,89 +3,113 @@
 require 'vendor/autoload.php';
 
 use MongoDB\Client;
+use MongoDB\Driver\Exception\Exception;
 
 $client = new Client("mongodb://localhost:27017");
 $db = $client->campusconnect;
-$collection = $db->users;
+$usersCollection = $db->users;
+$organizersCollection = $db->organizers;
 
-if ($_SERVER["REQUEST_METHOD"] == "POST")
-{
-    $email = $_POST['email'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
-    $name = $_POST['name'];
-    $institution = $_POST['institution_name'];
-    $phone = $_POST['phone'];
     $password = $_POST['password'];
+    $email = $_POST['email'];
+    $name = $_POST['name'];
+    $phone = $_POST['phone'];
+    $department = $_POST['department'];
+    $imagePath = '';
 
-    if (isset($_FILES['InstitutionID']) && $_FILES['InstitutionID']['error'] == 0)
-    {
-        $fileTmpPath = $_FILES['InstitutionID']['tmp_name'];
-        $fileName = $_FILES['InstitutionID']['name'];
-        $fileSize = $_FILES['InstitutionID']['size'];
+    // Handle file upload
+    if (isset($_FILES['InstitutionID']) && $_FILES['InstitutionID']['error'] == 0) {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
         $fileType = $_FILES['InstitutionID']['type'];
+        $fileSize = $_FILES['InstitutionID']['size'];
 
-        $allowedTypes = ['image/jpeg', 'image/png' , 'image/jpg'];
-
-        if (in_array($fileType, $allowedTypes) && $fileSize < 5000000)
-        {
+        if (in_array($fileType, $allowedTypes) && $fileSize <= 5000000) { // 5MB limit
             $uploadDir = 'uploads/institution_ID/';
-            if (!is_dir($uploadDir))
-            {
-                mkdir($uploadDir, 0777, true);
-            }
+            $fileExtension = pathinfo($_FILES['InstitutionID']['name'], PATHINFO_EXTENSION);
+            $uniqueFileName = uniqid() . '.' . $fileExtension;
+            $imagePath = $uploadDir . $uniqueFileName;
 
-            $newFileName = uniqid('img_') . '.' . pathinfo($fileName, PATHINFO_EXTENSION);
-            $destination = $uploadDir . $newFileName;
-
-            if (move_uploaded_file($fileTmpPath, $destination))
-            {
-                $imagePath = $destination;
-            } 
-            else
-            {
-                echo "<script>alert('Error uploading file.'); window.location.href = 'log_reg.html';</script>";
+            if (!move_uploaded_file($_FILES['InstitutionID']['tmp_name'], $imagePath)) {
+                echo "<script>alert('File upload failed.'); window.location.href = 'log_reg.html';</script>";
                 exit;
             }
-        }
-        else
-        {
+        } else {
             echo "<script>alert('Invalid file type or file size exceeds limit.'); window.location.href = 'log_reg.html';</script>";
             exit;
         }
-    }
-    else
-    {
+    } else {
         echo "<script>alert('Please upload a profile image.'); window.location.href = 'log_reg.html';</script>";
         exit;
     }
 
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
+    // Insert into users collection
     $userData = [
-        'email' => $email,
         'username' => $username,
-        'role' => 'organizer',
-        'name' => $name,
-        'institution_name' => $institution,
-        'phone' => $phone,
         'password' => $hashedPassword,
-        'Institution_img' => $imagePath,
+        'role' => 'organizer',
         'status' => 'pending'
     ];
 
-    $insertResult = $collection->insertOne($userData);
+    // Insert into organizers collection
+    $organizerData = [
+        'username' => $username,
+        'name' => $name,
+        'email' => $email,
+        'phone' => $phone,
+        'department' => $department,
+        'InstitutionID' => $imagePath
+    ];
 
-    if ($insertResult->getInsertedCount() == 1)
-    {
-        echo "<script>alert('Signup successful!'); window.location.href = 'log_reg.html';</script>";
+    try {
+        $serverStatusCursor = $client->admin->command(['serverStatus' => 1]);
+        $serverStatus = current($serverStatusCursor->toArray());
+        $isReplicaSet = isset($serverStatus['repl']) && $serverStatus['repl']['setName'];
+
+        if ($isReplicaSet) {
+            $session = $client->startSession();
+            $session->startTransaction();
+
+            try {
+                $usersResult = $usersCollection->insertOne($userData, ['session' => $session]);
+                $organizersResult = $organizersCollection->insertOne($organizerData, ['session' => $session]);
+
+                if ($usersResult->getInsertedCount() === 1 && $organizersResult->getInsertedCount() === 1) {
+                    $session->commitTransaction();
+                    echo "<script>alert('Registration successful.'); window.location.href = 'log_reg.html';</script>";
+                } else {
+                    $session->abortTransaction();
+                    echo "<script>alert('Registration failed.'); window.location.href = 'log_reg.html';</script>";
+                }
+            } catch (MongoDB\Driver\Exception\DuplicateKeyException $e) {
+                $session->abortTransaction();
+                echo "<script>alert('Username or Email already exists!'); window.location.href = 'log_reg.html';</script>";
+            } catch (Exception $e) {
+                $session->abortTransaction();
+                echo "<script>alert('Error: " . $e->getMessage() . "'); window.location.href = 'log_reg.html';</script>";
+            } finally {
+                $session->endSession();
+            }
+        } else {
+            // Non-transactional approach for standalone MongoDB servers
+            $usersResult = $usersCollection->insertOne($userData);
+            $organizersResult = $organizersCollection->insertOne($organizerData);
+
+            if ($usersResult->getInsertedCount() === 1 && $organizersResult->getInsertedCount() === 1) {
+                echo "<script>alert('Registration successful.'); window.location.href = 'log_reg.html';</script>";
+            } else {
+                echo "<script>alert('Registration failed.'); window.location.href = 'log_reg.html';</script>";
+            }
+        }
+    } catch (MongoDB\Driver\Exception\DuplicateKeyException $e) {
+        echo "<script>alert('Username or Email already exists!'); window.location.href = 'log_reg.html';</script>";
+    } catch (Exception $e) {
+        echo "<script>alert('Error: " . $e->getMessage() . "'); window.location.href = 'log_reg.html';</script>";
     }
-    else
-    {
-        echo "<script>alert('There was an error during signup.'); window.location.href = 'log_reg.html';</script>";
-    }
-}
-else
-{
+} else {
     echo "<script>alert('Invalid request method.'); window.location.href = 'log_reg.html';</script>";
 }
 ?>

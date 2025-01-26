@@ -29,6 +29,8 @@
 	display: none;
 	}
 
+	
+
 	.rwd-table td {
 	display: block;
 	}
@@ -99,6 +101,11 @@
 	}
 	}
 
+	/* Add this CSS rule to make the third column fit to content */
+	.rwd-table td:nth-child(3) {
+	width: auto;
+	white-space: nowrap;
+	}
 
 	/* THE END OF THE IMPORTANT STUFF */
 

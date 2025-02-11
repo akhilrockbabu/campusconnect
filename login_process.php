@@ -28,14 +28,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
             if ($user['role'] === 'admin')
             {
-                header("Location: admin6096.php");
+                header("Location: admin/admin6096.php");
                 exit();
             } 
             elseif ($user['role'] === 'organizer')
             {
                 if ($user['status'] === 'approved')
                 {
-                    header("Location: organizer81118.php");
+                    header("Location: organizer/organizer81118.php");
                     exit();
                 } else
                 {
@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             {
                 if ($user['status'] === 'approved') 
                 {
-                    header("Location: coOrganizer2002.php");
+                    header("Location: coOrganizer/coOrganizer2002.php");
                     exit();
                 } 
                 else 

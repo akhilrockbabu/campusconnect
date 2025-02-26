@@ -128,9 +128,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action']) && $_P
         const optionNumber = document.createElement('option');
         optionNumber.value = 'number';
         optionNumber.innerText = 'Number';
+        const optionEmail = document.createElement('option');
+        optionEmail.value = 'email';
+        optionEmail.innerText = 'Email';
+        const optionPhone = document.createElement('option');
+        optionPhone.value = 'phone';
+        optionPhone.innerText = 'Phone Number';
 
         select.appendChild(optionText);
         select.appendChild(optionNumber);
+        select.appendChild(optionEmail);
+        select.appendChild(optionPhone);
         inputDiv.appendChild(select);
 
         fieldDiv.appendChild(labelDiv);

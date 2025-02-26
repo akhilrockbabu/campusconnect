@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->Host = 'smtp.gmail.com';  // Gmail SMTP server
             $mail->SMTPAuth = true;
             $mail->Username = 'campusconnect.events@gmail.com';  // Admin's email address (replace with actual)
-            $mail->Password = 'zjof zgel zsdx bamx';  // Admin's email password (use app password for Gmail)
+            $mail->Password = 'cuut pyiw rrqh feub';  // Admin's email password (use app password for Gmail)
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
             $mail->Username = 'campusconnect.events@gmail.com';
-            $mail->Password = 'zjof zgel zsdx bamx';
+            $mail->Password = 'cuut pyiw rrqh feub';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
@@ -195,7 +195,7 @@ foreach ($pendingOrganizers as $organizer) {
                 echo "<td data-th='Email'>" . htmlspecialchars($doc['email']) . "</td>";
                 echo "<td data-th='Department'>" . htmlspecialchars($doc['department']) . "</td>";
                 echo "<td data-th='Document Preview'>";
-                echo "<img src='" . htmlspecialchars($doc['institution_id']) . "' alt='Document Preview' class='img-preview' onclick='toggleImageSize(this)'>";
+                echo "<img src='../" . htmlspecialchars($doc['institution_id']) . "' alt='Document Preview' class='img-preview' onclick='toggleImageSize(this)'>";
                 echo "</td>";
                 echo "<td>";
                 echo "<form method='POST' style='display:inline;'>";

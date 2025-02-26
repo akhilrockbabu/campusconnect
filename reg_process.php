@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $fileSize = $_FILES['InstitutionID']['size'];
 
         if (in_array($fileType, $allowedTypes) && $fileSize <= 5000000) { // 5MB limit
-            $uploadDir = '../uploads/org_institution_ID/';
+            $uploadDir = 'uploads/org_institution_ID/';
             $fileExtension = pathinfo($_FILES['InstitutionID']['name'], PATHINFO_EXTENSION);
             $uniqueFileName = uniqid() . '.' . $fileExtension;
             $imagePath = $uploadDir . $uniqueFileName;

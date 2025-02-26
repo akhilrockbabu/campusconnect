@@ -63,7 +63,7 @@ $eventsCollection = $db->events;
                                         <ul id="navigation">
                                             <li><a href="index.html">Home</a></li>
                                             <li><a href="about.html">About</a></li>
-                                            <li><a href="check.php">Check Status</a></li>
+                                            <li><a href="checkstatus.php">Check Status</a></li>
                                             <li><a href="log_reg.html">Login</a></li>
                                             <li><a href="contact.html">Contact</a></li>
                                         </ul>

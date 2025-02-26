@@ -1,33 +1,35 @@
 <?php
 
-require '../vendor/autoload.php';
+require 'vendor/autoload.php';
 
 use MongoDB\Client;
 use MongoDB\BSON\ObjectId;
 
 session_start();
 
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'organizer') {
-    header("Location: log_reg.html");
-    exit();
-}
-
 $client = new Client("mongodb://localhost:27017");
 $db = $client->campusconnect;
 $participantsCollection = $db->participants;
+$eventsCollection = $db->events;
+
+$email = $_POST['email'] ?? '';
+
 $participants = [];
-$participants = $participantsCollection->find(['event_id' => new ObjectId($_POST['event_id'])])->toArray();
+if ($email) {
+    $participants = $participantsCollection->find(['email' => $email])->toArray();
+}
+
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Manage Registrations</title>
+    <title>View Status</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/table_style.css">
+    <link rel="stylesheet" href="css/table_style.css">
     <style>
         .img-preview {
             width: 50px;
@@ -47,7 +49,7 @@ $participants = $participantsCollection->find(['event_id' => new ObjectId($_POST
         }
 
         button:hover {
-        background-color: #0056b3;
+            background-color: #0056b3;
         }
 
         .message {
@@ -61,22 +63,31 @@ $participants = $participantsCollection->find(['event_id' => new ObjectId($_POST
 </head>
 <body>
 <div class="container">
-    <h1>Manage Registrations</h1><br>
+    <h1>View Status</h1><br>
     <?php if (!empty($participants)): ?>
         <table class="rwd-table">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Action</th>
-                    <th>Action</th>
+                    <th>Event Name</th>
+                    <th>Event Description</th>
+                    <th>Event Venue</th>
+                    <th>Event Date</th>
+                    <th>Event Time</th>
+                    <th>Status</th>
+                    <th>View Ticket</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($participants as $participant): ?>
+                    <?php
+                    $event = $eventsCollection->findOne(['_id' => new ObjectId($participant['event_id'])]);
+                    ?>
                     <tr>
-                        <td data-th='Name'><?php echo htmlspecialchars($participant['name']); ?></td>
-                        <td data-th='Email'><?php echo htmlspecialchars($participant['email']); ?></td>
+                        <td data-th='Event Name'><?php echo htmlspecialchars($event['event_name']); ?></td>
+                        <td data-th='Event Description'><?php echo htmlspecialchars($event['event_desc']); ?></td>
+                        <td data-th='Event Venue'><?php echo htmlspecialchars($event['event_venue']); ?></td>
+                        <td data-th='Event Date'><?php echo htmlspecialchars($event['event_date']); ?></td>
+                        <td data-th= 'Event Time'><?php echo DateTime::createFromFormat('H:i', $event['event_time'])->format('h:i A'); ?></td>
                         <?php if($participant['status']=='approved'): ?>
                             <td data-th='Status' style='color:lightgreen'>Approved</td>
                         <?php elseif($participant['status']=='pending'): ?>
@@ -84,10 +95,16 @@ $participants = $participantsCollection->find(['event_id' => new ObjectId($_POST
                         <?php else: ?>
                             <td data-th='Status' style='color:red'>Rejected</td>
                         <?php endif; ?>
-                        <td data-th='Action'>
-                            <form method="POST" style="display:inline;" action="viewRegData.php">
+                        <td data-th='View Ticket'>
+                            <form action="viewTicket.php" method="post" target="_blank">
+                                <input type="hidden" name="event_name" value="<?php echo htmlspecialchars($event['event_name']); ?>">
+                                <input type="hidden" name="event_desc" value="<?php echo htmlspecialchars($event['event_desc']); ?>">
+                                <input type="hidden" name="event_venue" value="<?php echo htmlspecialchars($event['event_venue']); ?>">
+                                <input type="hidden" name="event_date" value="<?php echo htmlspecialchars($event['event_date']); ?>">
+                                <input type="hidden" name="event_time" value="<?php echo htmlspecialchars($event['event_time']); ?>">
+                                <input type="hidden" name="participant_name" value="<?php echo htmlspecialchars($participant['name']); ?>">
                                 <input type="hidden" name="participant_id" value="<?php echo htmlspecialchars($participant['_id']); ?>">
-                                <button type="submit" class="btn btn-success">View Details</button>
+                                <button type="submit" class="btn btn-primary">View Ticket</button>
                             </form>
                         </td>
                     </tr>
@@ -95,7 +112,7 @@ $participants = $participantsCollection->find(['event_id' => new ObjectId($_POST
             </tbody>
         </table><br><br>
     <?php else: ?>
-        <p>No participants found for this event.</p>
+        <p>No participants found for this email.</p>
     <?php endif; ?>
 
     <button type="button" onclick="window.location.href='approved_events.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>

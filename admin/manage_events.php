@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
         $mail->SMTPAuth = true;
         $mail->Username = 'campusconnect.events@gmail.com'; // SMTP username
-        $mail->Password = 'zjof zgel zsdx bamx'; // SMTP password
+        $mail->Password = 'cuut pyiw rrqh feub'; // SMTP password
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 

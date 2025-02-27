@@ -6,6 +6,30 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Login</title>
   <link rel="stylesheet" href="css/login_style.css">
+  <style>
+    .btn-success {
+      background-color: green;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+      display: inline-block;
+      margin-left: 200px;
+      margin-bottom: 20px;
+    }
+
+    .btn-success a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .btn-success:hover {
+      background-color: darkgreen;
+    }
+  </style>
 </head>
 <body>
   <script>
@@ -106,7 +130,8 @@ function validateForm() {
           <label for="check">Login</label>
         </span>
       </div>
-    </div> 
+    </div>
+    <button class="btn btn-success"><a href="index.php">Back to Home</a></button> 
   </div>
 </body>
 </html>

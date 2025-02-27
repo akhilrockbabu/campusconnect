@@ -147,7 +147,6 @@ $username = $_SESSION['username'];
                 <h1>CampusConnect</h1>
             </div>
             <nav class="navbar">
-                <a href="#"><button class="nav-btn" id="dashboardBtn">Home</button></a>
                 <a href="manage_organizers.php"><button class="nav-btn" id="dashboardBtn">Manage Organizers</button></a>
                 <a href="manage_events.php"><button class="nav-btn" id="dashboardBtn">Manage Events</button></a>
                 <a href="customize_interface.php"><button class="nav-btn" id="dashboardBtn">Customize Interface</button></a>

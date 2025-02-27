@@ -106,15 +106,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_event'])) {
                             </div>
                             <div class="col-xl-6 col-lg-6">
                                 <div class="main-menu  d-none d-lg-block">
-                                    <nav>
-                                        <ul id="navigation">
-                                            <li><a href="index.html">Home</a></li>
-                                            <li><a href="about.html">About</a></li>
-                                            <li><a href="check.php">Check Status</a></li>
-                                            <li><a href="admin\login_page.php">Login</a></li>
-                                            <li><a href="contact.html">Contact</a></li>
-                                        </ul>
-                                    </nav>
                                 </div>
                             </div>
                             <div class="col-xl-3 col-lg-3 d-none d-lg-block">
@@ -162,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_event'])) {
 
     <!--================Blog Area =================-->
     <section class="blog_area section-padding">
-        <div class="container">
+        <div class="container" style="margin-bottom:-100px;">
             <div class="row">
                 <div class="col-lg-8 mb-5 mb-lg-0">
                     <div class="blog_left_sidebar">
@@ -216,15 +207,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_event'])) {
     <!--================Blog Area =================-->
 
 <!-- Save Event Button -->
-<div class="container">
-    <div class="row">
         <div class="col-lg-12 text-center">
             <form method="POST">
-                <button type="submit" name="save_event" class="btn btn-primary">Save Event</button>
+                <button type="submit" name="save_event" class="btn btn-primary" style="margin-bottom:200px;">Save Event</button>
             </form>
-        </div>
-    </div>
-</div>
+
 
     <!-- JS here -->
     <script src="../js/vendor/modernizr-3.5.0.min.js"></script>

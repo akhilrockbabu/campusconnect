@@ -61,7 +61,7 @@ $eventsCollection = $db->events;
                                 <div class="main-menu  d-none d-lg-block">
                                     <nav>
                                         <ul id="navigation">
-                                            <li><a href="index.html">Home</a></li>
+                                            <li><a href="index.php">Home</a></li>
                                             <li><a href="about.html">About</a></li>
                                             <li><a href="checkstatus.php">Check Status</a></li>
                                             <li><a href="log_reg.html">Login</a></li>
@@ -125,7 +125,7 @@ $eventsCollection = $db->events;
                 </div>
             </div>
             <?php
-                $events = $eventsCollection->find(['status' => 'live']);
+                $events = $eventsCollection->find(['status' => 'live']);;
                 $eventCount = 0;
                 foreach ($events as $event) {
                     $eventPosterPath = preg_replace('/^\.\.\//', '', $event['event_poster']);

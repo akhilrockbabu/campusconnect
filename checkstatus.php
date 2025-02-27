@@ -46,28 +46,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>
+    .btn-success {
+      background-color: green;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+      display: inline-block;
+      margin-left: 200px;
+      margin-bottom: 20px;
+    }
+
+    .btn-success a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .btn-success:hover {
+      background-color: darkgreen;
+    }
+  </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Check Status</title>
   <link rel="stylesheet" href="css/login_style.css">
-  <style>
-    .btn-success {
-        background-color: rgb(155, 8, 26);
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        cursor: pointer;
-        border-radius: 5px;
-        font-size: 16px;
-    }
-    .btn-success:hover {
-        background-color: rgba(219, 110, 14, 0.72);
-    }
-    .btn-success:active {
-        background-color: #1e7e34;
-    }
-  </style>
   <script>
     function validateForm() {
         const email = document.getElementById("email").value.trim();
@@ -132,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
       <form id="sendOtpForm" action="checkstatus.php" method="post">
         <input type="hidden" name="action" value="send_otp">
         <input type="email" name="email" id="email" placeholder="Enter your Email ID" value="<?php echo isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : ''; ?>">
-        <button type="button" class="btn btn-success" onclick="sendOtp()">Send OTP</button>
+        <button type="button" style="margin-left:0px;" class="btn btn-success" onclick="sendOtp()">Send OTP</button>
       </form>
       <form id="checkStatusForm" action="viewStatus.php" method="post" onsubmit="return validateForm()">
         <div id="otpField" style="display: none;">
@@ -143,6 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         <input type="submit" class="button" value="Check Status">
       </form>
     </div> 
+    <button class="btn btn-success"><a href="index.php">Back to Home</a></button>
   </div>
   <?php if (isset($message)): ?>
     <script>

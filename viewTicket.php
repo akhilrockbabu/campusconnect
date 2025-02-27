@@ -23,8 +23,8 @@ $participant = $participantsCollection->findOne(['_id' => new ObjectId($particip
 $institution_image = $participant['InstitutionID'] ?? 'default_image_path.jpg'; // Default image if not found
 $payment_proof = $participant['PaymentProof'] ?? 'default_payment_proof.jpg'; // Default payment proof
 
-// Get the local server IP (use 'localhost' if accessing from the same PC)
-$serverIP = "192.168.1.5"; // Fetches local IP
+// Get the local server IP dynamically
+$serverIP = getHostByName(getHostName());
 if ($serverIP == "::1" || $serverIP == "127.0.0.1") {
     $serverIP = "localhost"; // Use localhost for local testing
 }
@@ -64,7 +64,7 @@ if (isset($_POST['download_pdf'])) {
             body, html {
                 height: 100vh;
                 display: grid;
-                font-family: "Staatliches", cursive;
+                font-family: "Times New Roman", Times, serif;
                 background: #d83565;
                 color: black;
                 font-size: 14px;
@@ -83,9 +83,9 @@ if (isset($_POST['download_pdf'])) {
             }
 
             .image {
-                height: 250px;
+                height: 350px;
                 width: 250px;
-                background-image: url("' . htmlspecialchars($institution_image) . '");
+                background-image: url("data:image/jpeg;base64,' . base64_encode(file_get_contents($institution_image)) . '");
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
@@ -117,6 +117,7 @@ if (isset($_POST['download_pdf'])) {
                 justify-content: flex-end;
                 align-items: flex-end;
                 padding: 5px;
+                margin-top: 150px;
             }
 
             .ticket-info {
@@ -157,7 +158,7 @@ if (isset($_POST['download_pdf'])) {
 
             .show-name {
                 font-size: 32px;
-                font-family: "Nanum Pen Script", cursive;
+                font-family: "Times New Roman", Times, serif;
                 color: #d83565;
             }
 
@@ -192,6 +193,16 @@ if (isset($_POST['download_pdf'])) {
                 height: 100px;
                 margin: 40px;
                 width: 100px;
+            }
+
+            .institution-id {
+                margin-top: 20px;
+                text-align: center;
+            }
+
+            .institution-id img {
+                max-width: 100%;
+                height: auto;
             }
 
         </style>
@@ -236,12 +247,6 @@ if (isset($_POST['download_pdf'])) {
                 <span>ADMIT ONE</span>
             </p>
             <div class="right-info-container">
-                <div class="show-name">
-                    <h1>' . htmlspecialchars($event_name) . '</h1>
-                </div>
-                <div class="time">
-                    <p>' . DateTime::createFromFormat('H:i', $event_time)->format('h:i A') . '</p>
-                </div>
                 <div class="barcode">
                     <img src="data:image/png;base64,' . $qrCodeBase64 . '" alt="QR Code">
                 </div>
@@ -251,7 +256,7 @@ if (isset($_POST['download_pdf'])) {
     </body>
     </html>';
     $dompdf->loadHtml($html);
-    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->setPaper('A4', 'landscape');
     $dompdf->render();
     $dompdf->stream('ticket.pdf', ['Attachment' => 1]);
     exit;
@@ -279,7 +284,7 @@ if (isset($_POST['download_pdf'])) {
         body, html {
             height: 100vh;
             display: grid;
-            font-family: "Staatliches", cursive;
+            font-family: "Times New Roman", Times, serif;
             background: #d83565;
             color: black;
             font-size: 14px;
@@ -298,7 +303,7 @@ if (isset($_POST['download_pdf'])) {
         }
 
         .image {
-            height: 250px;
+            height: 400px;
             width: 250px;
             background-image: url("<?php echo htmlspecialchars($institution_image); ?>");
             background-size: cover;
@@ -332,6 +337,7 @@ if (isset($_POST['download_pdf'])) {
             justify-content: flex-end;
             align-items: flex-end;
             padding: 5px;
+            margin-top: 150px;
         }
 
         .ticket-info {
@@ -372,7 +378,7 @@ if (isset($_POST['download_pdf'])) {
 
         .show-name {
             font-size: 32px;
-            font-family: "Nanum Pen Script", cursive;
+            font-family: "Times New Roman", Times, serif;
             color: #d83565;
         }
 
@@ -405,13 +411,26 @@ if (isset($_POST['download_pdf'])) {
 
         .barcode img {
             height: 100px;
-            margin: 40px;
             width: 100px;
+            margin-top: 150px;
+            margin-right: 50px;
+            margin-left: 50px;
+        }
+
+        .institution-id {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .institution-id img {
+            max-width: 100%;
+            height: auto;
         }
 
         .download-button {
             background-color: green;
             color: white;
+            align-self: center;
             border: none;
             padding: 10px 20px;
             cursor: pointer;
@@ -464,12 +483,6 @@ if (isset($_POST['download_pdf'])) {
             <span>ADMIT ONE</span>
         </p>
         <div class="right-info-container">
-            <div class="show-name">
-                <h1><?php echo htmlspecialchars($event_name); ?></h1>
-            </div>
-            <div class="time">
-                <p><?php echo DateTime::createFromFormat('H:i', $event_time)->format('h:i A'); ?></p>
-            </div>
             <div class="barcode">
                 <img src="data:image/png;base64,<?php echo $qrCodeBase64; ?>" alt="QR Code">
             </div>

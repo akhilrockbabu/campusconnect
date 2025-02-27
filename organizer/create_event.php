@@ -37,6 +37,33 @@
 
     <!-- Main CSS-->
     <link href="../css/event_reg.css" rel="stylesheet" media="all">
+    <style>
+        .body{
+            background-color: #009579;
+        }
+        .btn-success {
+        background-color: green;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        display: inline-block;
+        margin-left: 200px;
+        margin-bottom: 2px;
+        }
+
+        .btn-success a {
+        color: white;
+        text-decoration: none;
+        }
+
+        .btn-success:hover {
+        background-color: darkgreen;
+        }
+    </style>
 </head>
 
 <body>
@@ -44,7 +71,7 @@
         <div class="wrapper wrapper--w680">
             <div class="card card-4">
                 <div class="card-body">
-                    <h2 class="title">Registration Form</h2>
+                    <h2 class="title">Enter Basic Event Details</h2>
                     <form method="POST" action="formbuilder.php">
                         <div class="row row-space">
                             <div class="col-2">
@@ -105,6 +132,14 @@
                         <div class="row row-space">
                             <div class="col-2">
                                 <div class="input-group">
+                                    <label class="label">Registration Limit</label>
+                                    <input class="input--style-4" type="number" name="event_limit" min="2" step="1" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div class="col-2">
+                                <div class="input-group">
                                     <label class="label">UPI ID</label>
                                     <input class="input--style-4" type="text" name="upi_id" pattern="^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$" required>
                                 </div>
@@ -139,6 +174,8 @@
                         <div class="p-t-15">
                             <input type="hidden" name="form_action" value="create_event">
                             <button class="btn btn--radius-2 btn--blue" type="submit">Submit</button>
+                            <button class="btn btn-success"><a href="organizer81118.php">Back to Home</a></button>
+                        
                         </div>
                     </form>
                 </div>

@@ -18,6 +18,7 @@ $client = new Client("mongodb://localhost:27017");
 $db = $client->campusconnect;
 $participantsCollection = $db->participants;
 $organizerCollection = $db->organizers;
+$eventsCollection = $db->events;
 
 // Fetch organizer email using the username in session variable
 $organizerUsername = $_SESSION['username'];
@@ -30,6 +31,8 @@ $participant = null;
 if ($participantId) {
     $participant = $participantsCollection->findOne(['_id' => new ObjectId($participantId)]);
 }
+
+$event_id = $participant['event_id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     $action = $_POST['action'];
@@ -101,6 +104,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         // Update the participant status to rejected
         $participantsCollection->updateOne(['_id' => new ObjectId($participantId)], ['$set' => ['status' => 'rejected']]);
+        $eventsCollection->updateOne(['_id' => new ObjectId($event_id)],  ['$inc' => ['event_limit' => 1]] ); 
+
     }
 
     // Redirect back to the manage registrations page with a message
@@ -209,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
         .img-preview.large {
             width: 500px;
-            height: 500px;
+            height: 1000px;
             z-index: 1000;
             position: relative;
         }

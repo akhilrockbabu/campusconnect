@@ -15,6 +15,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'organizer') {
 $client = new Client("mongodb://localhost:27017");
 $db = $client->campusconnect;
 $eventsCollection = $db->events;
+$participantsCollection = $db->participants;
 
 // Fetch the logged-in user's username
 $organizerUsername = $_SESSION['username'];
@@ -79,6 +80,13 @@ $events = $eventsCollection->find([
             text-align: center;
         }
     </style>
+    <script>
+        function confirmDelete(event) {
+            if (!confirm("Deleting this event may delete the event details and registration details entirely from the database. Think twice before you do.")) {
+                event.preventDefault();
+            }
+        }
+    </script>
 </head>
 <body>
 
@@ -91,7 +99,8 @@ $events = $eventsCollection->find([
                 <th>Description</th>
                 <th>Date</th>
                 <th>Action</th>
-                <th>View Registerations</th>
+                <th>View Registrations</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -110,16 +119,23 @@ $events = $eventsCollection->find([
                             <?php endif; ?>
                         </form>
                     </td>
-                    <td data-th='View Registerations'>
+                    <td data-th='View Registrations'>
                         <form method="POST" style="display:inline;" action="manage_registerations.php">
                             <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
-                            <button type="submit" name="action" value="" class="btn btn-success">View Registerations</button>    
+                            <button type="submit" name="action" value="" class="btn btn-success">View Registrations</button>    
+                        </form>
+                    </td>
+                    <td data-th='Delete'>
+                        <form method="POST" style="display:inline;" action="delete_event.php" onsubmit="confirmDelete(event)">
+                            <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
+                            <button type="submit" name="action" value="" class="btn btn-danger">Delete Event</button>    
                         </form>
                     </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
-    </table>
+    </table><br><br>
+    <button type="button" onclick="window.location.href='organizer81118.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>
 </div>
 </body>
 </html>

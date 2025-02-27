@@ -94,9 +94,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $participantData['PaymentProof'] = $paymentProofPath;
     $participantData['status'] = 'pending';
 
+
     // Insert participant data into the collection
     try {
         $participantsCollection->insertOne($participantData);
+        $eventLimit = $event['event_limit'] - 1;
+        $eventsCollection->updateOne(['_id' => new MongoDB\BSON\ObjectId($eventId)], ['$set' => ['event_limit' => $eventLimit]]);
         echo "<script>alert('Registration successful!'); window.location.href = 'display_event.php?event_id=" . urlencode($eventId) . "';</script>";
     } catch (Exception $e) {
         if ($e->getCode() == 11000) { // Duplicate key error

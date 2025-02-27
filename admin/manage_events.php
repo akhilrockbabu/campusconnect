@@ -159,7 +159,8 @@ $events = $eventsCollection->find(['status' => 'pending']);
                 </tr>
             <?php endforeach; ?>
         </tbody>
-    </table>
+    </table><br><br>
+    <button type="button" onclick="window.location.href='admin6096.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>
 </div>
 <script>
     function toggleImageSize(imgElement) {

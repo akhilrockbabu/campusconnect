@@ -63,8 +63,8 @@ $eventsCollection = $db->events;
                                         <ul id="navigation">
                                             <li><a href="index.php">Home</a></li>
                                             <li><a href="about.html">About</a></li>
-                                            <li><a href="check.php">Check Status</a></li>
-                                            <li><a href="admin\login_page.php">Login</a></li>
+                                            <li><a href="checkstatus.php">Check Status</a></li>
+                                            <li><a href="log_reg.html">Login</a></li>
                                             
                                             <!--<li><a href="#">pages <i class="ti-angle-down"></i></a>
                                                 <ul class="submenu">

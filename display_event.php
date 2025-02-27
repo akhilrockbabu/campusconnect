@@ -73,10 +73,10 @@ $organizer = $organizersCollection->findOne(['username' => $event['event_organiz
                                 <div class="main-menu  d-none d-lg-block">
                                     <nav>
                                         <ul id="navigation">
-                                            <li><a href="index.html">Home</a></li>
+                                            <li><a href="index.php">Home</a></li>
                                             <li><a href="about.html">About</a></li>
-                                            <li><a href="check.php">Check Status</a></li>
-                                            <li><a href="admin\login_page.php">Login</a></li>
+                                            <li><a href="checkstatus.php">Check Status</a></li>
+                                            <li><a href="log_reg.html">Login</a></li>
                                             <li><a href="contact.html">Contact</a></li>
                                         </ul>
                                     </nav>
@@ -85,7 +85,7 @@ $organizer = $organizersCollection->findOne(['username' => $event['event_organiz
                             <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                                 <div class="buy_tkt">
                                     <div class="book_btn d-none d-lg-block">
-                                        <a href="#">Register Now</a>
+                                        <a href="event_reg.php?event_id=<?php echo urlencode($event['_id']); ?>">Register Now</a>
                                     </div>
                                 </div>
                             </div>

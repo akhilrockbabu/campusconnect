@@ -95,6 +95,7 @@ if ($email) {
                         <?php else: ?>
                             <td data-th='Status' style='color:red'>Rejected</td>
                         <?php endif; ?>
+                        <?php if($participant['status']=='approved'){?>
                         <td data-th='View Ticket'>
                             <form action="viewTicket.php" method="post" target="_blank">
                                 <input type="hidden" name="event_name" value="<?php echo htmlspecialchars($event['event_name']); ?>">
@@ -107,6 +108,12 @@ if ($email) {
                                 <button type="submit" class="btn btn-primary">View Ticket</button>
                             </form>
                         </td>
+                        <?php }
+                        else{?>
+                            <td data-th='View Ticket'>
+                                <button type="button" class="btn btn-primary" disabled>View Ticket</button>
+                            </td>
+                        <?php } ?>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
@@ -115,7 +122,7 @@ if ($email) {
         <p>No participants found for this email.</p>
     <?php endif; ?>
 
-    <button type="button" onclick="window.location.href='approved_events.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>
+    <button type="button" onclick="window.location.href='checkstatus.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>
 
 </div>
 

@@ -1,10 +1,9 @@
 <?php
-require 'vendor/autoload.php';
+require '../vendor/autoload.php';
 use MongoDB\Client;
 
 $client = new Client("mongodb://localhost:27017");
 $db = $client->campusconnect;
-$eventsCollection = $db->events;
 $interfaceCollection = $db->interface;
 $home = $interfaceCollection->findOne(['page' => 'home']);
 
@@ -50,23 +49,60 @@ $college_link_size = $home['college_link']['size'];
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- <link rel="manifest" href="site.webmanifest"> -->
-    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="../img/favicon.png">
     <!-- Place favicon.ico in the root directory -->
 
     <!-- CSS here -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="css/magnific-popup.css">
-    <link rel="stylesheet" href="css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/themify-icons.css">
-    <link rel="stylesheet" href="css/gijgo.css">
-    <link rel="stylesheet" href="css/nice-select.css">
-    <link rel="stylesheet" href="css/animate.css">
-    <link rel="stylesheet" href="css/flaticon.css">
-    <link rel="stylesheet" href="css/slicknav.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/owl.carousel.min.css">
+    <link rel="stylesheet" href="../css/magnific-popup.css">
+    <link rel="stylesheet" href="../css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/themify-icons.css">
+    <link rel="stylesheet" href="../css/gijgo.css">
+    <link rel="stylesheet" href="../css/nice-select.css">
+    <link rel="stylesheet" href="../css/animate.css">
+    <link rel="stylesheet" href="../css/flaticon.css">
+    <link rel="stylesheet" href="../css/slicknav.css">
 
-    <link rel="stylesheet" href="css/style.css">
-    <!-- <link rel="stylesheet" href="css/responsive.css"> -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- <link rel="stylesheet" href="../css/responsive.css"> -->
+    <style>
+        .popup-form {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .popup-form textarea,
+        .popup-form input,
+        .popup-form select {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .popup-form button {
+            display: block;
+            width: 100%;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
 </head>
 
 <body>
@@ -84,26 +120,8 @@ $college_link_size = $home['college_link']['size'];
                             <div class="col-xl-3 col-lg-3">
                                 <div class="logo">
                                     <a href="index.html"></a>
-                                        <img src="img/logo.png" alt="">
+                                        <img src="../img/logo.png" alt="">
                                     </a>
-                                </div>
-                            </div>
-                            <div class="col-xl-6 col-lg-6">
-                                <div class="main-menu  d-none d-lg-block">
-                                    <nav>
-                                        <ul id="navigation">
-                                            <li><a href="index.php">Home</a></li>
-                                            <li><a href="checkstatus.php">Check Status</a></li>
-                                            <li><a href="log_reg.html">Login</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-lg-3 d-none d-lg-block">
-                                <div class="buy_tkt">
-                                    <div class="book_btn d-none d-lg-block">
-                                        <a href="events.php">Register Now</a>
-                                    </div>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -126,10 +144,10 @@ $college_link_size = $home['college_link']['size'];
                     <div class="col-xl-12">
                         <div class="slider_text text-center">
                             <div class="shape_1 wow fadeInUp" data-wow-duration="1s" data-wow-delay=".2s">
-                                <img src="img/shape/shape_1.svg" alt="">
+                                <img src="../img/shape/shape_1.svg" alt="">
                             </div>
                             <div class="shape_2 wow fadeInDown" data-wow-duration="1s" data-wow-delay=".2s">
-                                <img src="img/shape/shape_2.svg" alt="">
+                                <img src="../img/shape/shape_2.svg" alt="">
                             </div>
                             <span class="editable" data-field="program_date" data-value="<?php echo htmlspecialchars($date); ?>" data-font="<?php echo htmlspecialchars($date_font); ?>" data-color="<?php echo htmlspecialchars($date_color); ?>" data-size="<?php echo htmlspecialchars($date_size); ?>" style="font-family: <?php echo $date_font; ?>; color: <?php echo $date_color; ?>; font-size: <?php echo $date_size; ?>px;"><?php echo htmlspecialchars($date);?></span>
                             <h3 class="editable" data-field="program_name1" data-value="<?php echo htmlspecialchars($name1); ?>" data-font="<?php echo htmlspecialchars($name1_font); ?>" data-color="<?php echo htmlspecialchars($name1_color); ?>" data-size="<?php echo htmlspecialchars($name1_size); ?>" style="font-family: <?php echo $name1_font; ?>; color: <?php echo $name1_color; ?>; font-size: <?php echo $name1_size; ?>px;"><?php echo htmlspecialchars($name1);?></h3>
@@ -153,49 +171,15 @@ $college_link_size = $home['college_link']['size'];
                     </div>
                 </div>
             </div>
-            <?php
-                $events = $eventsCollection->find(['status' => 'live', 'event_limit' => ['$gt' => 0]]);
-                $eventCount = 0;
-                foreach ($events as $event) {
-                    $eventPosterPath = preg_replace('/^\.\.\//', '', $event['event_poster']);
-                    
-                    if ($eventCount % 2 == 0) {
-                        if ($eventCount > 0) {
-                            echo '</div></div></div>'; 
-                        }
-                        echo '<div class="row justify-content-center"><div class="col-lg-8"><div class="row">';
-                    }
-            ?>
-            <div class="col-lg-6 col-md-6">
-                <div class="single_performer wow fadeInUp" data-wow-duration="1s" data-wow-delay=".3s">
-                    <div data-tilt class="thumb">
-                        <a href="display_event.php?event_id=<?php echo urlencode($event['_id']); ?>">
-                            <img src="<?php echo htmlspecialchars($eventPosterPath); ?>" alt="Document Preview">
-                        </a>
-                    </div>
-                    <div class="performer_heading">
-                        <h4><?php echo htmlspecialchars($event['event_name']); ?></h4>
-                        <span><?php echo htmlspecialchars($event['event_desc']); ?></span>
+                <footer class="footer">
+                    <div class="footer_top">
+                        <div class="footer_widget">
+                            <div class="address_details text-center">
+                                <h4 class="wow fadeInUp" data-wow-duration="1s" data-wow-delay=".3s">Your Events will appear here</h4>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <?php
-                    $eventCount++;
-                }
-                if ($eventCount % 2 != 0) {
-                    echo '</div></div></div>'; 
-                }
-                if ($eventCount == 0) {
-                    echo '  <footer class="footer">
-                                <div class="footer_top">
-                                    <div class="footer_widget">
-                                        <div class="address_details text-center">
-                                            <h4 class="wow fadeInUp" data-wow-duration="1s" data-wow-delay=".3s">No Events are currently available!</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>'; }
-            ?>
         </div>
     </div>
     <!-- performar_area_end  -->
@@ -227,7 +211,7 @@ $college_link_size = $home['college_link']['size'];
                             <div class="address_details text-center">
                                 <h4 class="editable" data-field="program_date" data-value="<?php echo htmlspecialchars($date); ?>" data-font="<?php echo htmlspecialchars($date_font); ?>" data-color="<?php echo htmlspecialchars($date_color); ?>" data-size="<?php echo htmlspecialchars($date_size); ?>" class="wow fadeInUp" data-wow-duration="1s" data-wow-delay=".3s" style="font-family: <?php echo $date_font; ?>; color: <?php echo $date_color; ?>; font-size: <?php echo $date_size; ?>px;"><?php echo htmlspecialchars($date); ?></h4>
                                 <h3 class="editable" data-field="college_name" data-value="<?php echo htmlspecialchars($college); ?>" data-font="<?php echo htmlspecialchars($college_font); ?>" data-color="<?php echo htmlspecialchars($college_color); ?>" data-size="<?php echo htmlspecialchars($college_size); ?>" class="wow fadeInUp" data-wow-duration="1s" data-wow-delay=".4s" style="font-family: <?php echo $college_font; ?>; color: <?php echo $college_color; ?>; font-size: <?php echo $college_size; ?>px;"><?php echo htmlspecialchars($college); ?></h3>
-                                <a href="events.php" class="boxed-btn3 wow fadeInUp" data-wow-duration="1s" data-wow-delay=".6s">Register Now</a>
+                                <a href="admin6096.php" class="boxed-btn3 wow fadeInUp" data-wow-duration="1s" data-wow-delay=".6s">Back</a>
                             </div>
                         </div>
                     </div>
@@ -238,10 +222,7 @@ $college_link_size = $home['college_link']['size'];
             <div class="container">
                 <div class="row">
                     <div class="col-xl-12">
-                        <p class="copy_right text-center wow fadeInDown" data-wow-duration="1s" data-wow-delay=".5s" style="font-family: <?php echo $college_link_font; ?>; color: <?php echo $college_link_color; ?>; font-size: <?php echo $college_link_size; ?>px;">Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved |<a href="<?php echo htmlspecialchars($college_link); ?>"><?php echo htmlspecialchars($college); ?></a></p>
-                        <p class="copy_right text-center wow fadeInDown" data-wow-duration="1s" data-wow-delay=".5s">Developed By:</p>
-                        <h4 class="wow fadeInUp" data-wow-duration="1s" data-wow-delay=".4s" style="text-align: center; color: white;">
-                            <a href="https://www.instagram.com/rockiey._">Akhil Rock Babu</a>
+                        <tr><p class="editable" data-field="college_link" data-value="<?php echo htmlspecialchars($college_link); ?>" data-font="<?php echo htmlspecialchars($college_link_font); ?>" data-color="<?php echo htmlspecialchars($college_link_color); ?>" data-size="<?php echo htmlspecialchars($college_link_size); ?>" class="copy_right text-center wow fadeInDown" data-wow-duration="1s" data-wow-delay=".5s" style="font-family: <?php echo $college_link_font; ?>; color: <?php echo $college_link_color; ?>; font-size: <?php echo $college_link_size; ?>px;">Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved |<a href="<?php echo htmlspecialchars($college_link); ?>"><?php echo htmlspecialchars($college); ?></a></p>
                     </div>
                 </div>
             </div>
@@ -249,38 +230,115 @@ $college_link_size = $home['college_link']['size'];
     </footer>
     <!-- footer_end  -->
 
+    <!-- Popup Form -->
+    <div class="popup-overlay"></div>
+    <div class="popup-form">
+        <form id="updateForm">
+            <input type="hidden" id="field" name="field">
+            <label for="value">Value:</label>
+            <textarea id="value" name="value"></textarea>
+            <label for="font">Font:</label><br>
+            <select id="font" name="font">
+                <option value="'Anton', sans-serif">Anton, sans-serif</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="'Monoton', cursive">Monoton, cursive</option>
+                <option value="'Roboto', sans-serif">Roboto, sans-serif</option>
+                <option value="'Lobster', cursive">Lobster, cursive</option>
+                <option value="themify">themify</option>
+            </select><br><br>
+            <label for="color">Color:</label>
+            <input type="color" id="color" name="color">
+            <label for="size">Size (px):</label>
+            <input type="number" id="size" name="size">
+            <button type="submit">Update</button>
+        </form>
+    </div>
+
     <!-- JS here -->
-    <script src="js/vendor/modernizr-3.5.0.min.js"></script>
-    <script src="js/vendor/jquery-1.12.4.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/owl.carousel.min.js"></script>
-    <script src="js/isotope.pkgd.min.js"></script>
-    <script src="js/ajax-form.js"></script>
-    <script src="js/waypoints.min.js"></script>
-    <script src="js/jquery.counterup.min.js"></script>
-    <script src="js/imagesloaded.pkgd.min.js"></script>
-    <script src="js/scrollIt.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/wow.min.js"></script>
-    <script src="js/gijgo.min.js"></script>
-    <script src="js/nice-select.min.js"></script>
-    <script src="js/jquery.slicknav.min.js"></script>
-    <script src="js/jquery.magnific-popup.min.js"></script>
-    <script src="js/tilt.jquery.js"></script>
-    <script src="js/plugins.js"></script>
-
-
+    <script src="../js/vendor/modernizr-3.5.0.min.js"></script>
+    <script src="../js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="../js/popper.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/owl.carousel.min.js"></script>
+    <script src="../js/isotope.pkgd.min.js"></script>
+    <script src="../js/ajax-form.js"></script>
+    <script src="../js/waypoints.min.js"></script>
+    <script src="../js/jquery.counterup.min.js"></script>
+    <script src="../js/imagesloaded.pkgd.min.js"></script>
+    <script src="../js/scrollIt.js"></script>
+    <script src="../js/jquery.scrollUp.min.js"></script>
+    <script src="../js/wow.min.js"></script>
+    <script src="../js/gijgo.min.js"></script>
+    <script src="../js/nice-select.min.js"></script>
+    <script src="../js/jquery.slicknav.min.js"></script>
+    <script src="../js/jquery.magnific-popup.min.js"></script>
+    <script src="../js/tilt.jquery.js"></script>
+    <script src="../js/plugins.js"></script>
 
     <!--contact js-->
-    <script src="js/contact.js"></script>
-    <script src="js/jquery.ajaxchimp.min.js"></script>
-    <script src="js/jquery.form.js"></script>
-    <script src="js/jquery.validate.min.js"></script>
-    <script src="js/mail-script.js"></script>
+    <script src="../js/contact.js"></script>
+    <script src="../js/jquery.ajaxchimp.min.js"></script>
+    <script src="../js/jquery.form.js"></script>
+    <script src="../js/jquery.validate.min.js"></script>
+    <script src="../js/mail-script.js"></script>
+    <script src="../js/main.js"></script>
 
+    <script>
+        $(document).ready(function() {
+            $('.editable').on('click', function() {
+                var field = $(this).data('field');
+                var value = $(this).data('value');
+                var font = $(this).data('font');
+                var color = $(this).data('color');
+                var size = $(this).data('size');
 
-    <script src="js/main.js"></script>
+                $('#field').val(field);
+                $('#value').val(value);
+                $('#font').val(font);
+                $('#color').val(color);
+                $('#size').val(size);
+
+                $('#font option').each(function() {
+                    if ($(this).val() == font) {
+                        $(this).prop('selected', true);
+                    }
+                });
+
+                $('.popup-overlay').show();
+                $('.popup-form').show();
+            });
+
+            $('.popup-overlay').on('click', function() {
+                $('.popup-overlay').hide();
+                $('.popup-form').hide();
+            });
+
+            $('#updateForm').on('submit', function(e) {
+                e.preventDefault();
+
+                var field = $('#field').val();
+                var value = $('#value').val();
+                var font = $('#font').val();
+                var color = $('#color').val();
+                var size = $('#size').val();
+
+                $.ajax({
+                    url: 'update_home.php',
+                    type: 'POST',
+                    data: {
+                        field: field,
+                        value: value,
+                        font: font,
+                        color: color,
+                        size: size
+                    },
+                    success: function(response) {
+                        location.reload();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

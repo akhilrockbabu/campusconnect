@@ -62,25 +62,8 @@ $eventsCollection = $db->events;
                                     <nav>
                                         <ul id="navigation">
                                             <li><a href="index.php">Home</a></li>
-                                            <li><a href="about.html">About</a></li>
                                             <li><a href="checkstatus.php">Check Status</a></li>
                                             <li><a href="log_reg.html">Login</a></li>
-                                            
-                                            <!--<li><a href="#">pages <i class="ti-angle-down"></i></a>
-                                                <ul class="submenu">
-                                                    <li><a href="about.html">about</a></li>
-                                                    <li><a href="Program.html">Program</a></li>
-                                                    <li><a href="Venue.html">Venue</a></li>
-                                                    <li><a href="elements.html">elements</a></li>
-                                                </ul>
-                                            </li>
-                                            <li><a href="#">blog <i class="ti-angle-down"></i></a>
-                                                <ul class="submenu">
-                                                    <li><a href="blog.html">blog</a></li>
-                                                    <li><a href="single-blog.html">single-blog</a></li>
-                                                </ul>
-                                            </li>-->
-                                            <li><a href="contact.html">Contact</a></li>
                                         </ul>
                                     </nav>
                                 </div>

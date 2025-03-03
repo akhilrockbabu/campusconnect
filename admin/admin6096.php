@@ -149,7 +149,7 @@ $username = $_SESSION['username'];
             <nav class="navbar">
                 <a href="manage_organizers.php"><button class="nav-btn" id="dashboardBtn">Manage Organizers</button></a>
                 <a href="manage_events.php"><button class="nav-btn" id="dashboardBtn">Manage Events</button></a>
-                <a href="customize_interface.php"><button class="nav-btn" id="dashboardBtn">Customize Interface</button></a>
+                <a href="customize_home.php"><button class="nav-btn" id="dashboardBtn">Customize Interface</button></a>
                 <button class="nav-btn" id="notificationsBtn">Manage Participants</button>
                 <a href="../logout.php"><button class="nav-btn" id="dashboardBtn">Logout</button></a>
             </nav>

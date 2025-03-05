@@ -1,0 +1,28 @@
+[{
+  "_id": {
+    "$oid": "679326589448b322dc02b014"
+  },
+  "username": "admin",
+  "role": "admin",
+  "password": "$2y$10$.HvAUTQ/0agqnd217PiIY.BrqFFAyyeAJnocHaWNN6GQRVePvxsni",
+  "created_at": {
+    "$date": "2025-01-24T05:34:16.777Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "67c190cb31a765bbb20ee594"
+  },
+  "username": "rockiey",
+  "password": "$2y$10$FwCnygNAjk2OThQXEz2Ru.OJtdxzkwYQXdmFovEjFZOw0seA1cvmm",
+  "role": "organizer",
+  "status": "approved"
+},
+{
+  "_id": {
+    "$oid": "67c88319a60cfb51730aca5b"
+  },
+  "username": "rock",
+  "role": "co-organizer",
+  "password": "$2y$10$GiUQU/bmUkEXj75ecLF/Qu4IdRUgsDw2pvLUOh.LpTAnZ/FsfA16C"
+}]

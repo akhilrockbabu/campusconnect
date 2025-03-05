@@ -1,0 +1,15 @@
+[{
+  "_id": {
+    "$oid": "67c1920931a765bbb20ee59a"
+  },
+  "event_id": {
+    "$oid": "67c1916731a765bbb20ee599"
+  },
+  "name": "Akhil Rock Babu",
+  "email": "akhilpes2002@gmail.com",
+  "phone": "2345679560",
+  "Department": "MCA",
+  "InstitutionID": "uploads/parti_institution_ID/67c19209bb8dc.jpg",
+  "PaymentProof": "uploads/payment_proof/67c19209bbdd3.PNG",
+  "status": "approved"
+}]

@@ -1,0 +1,25 @@
+[{
+  "_id": {
+    "$oid": "67c1916731a765bbb20ee599"
+  },
+  "event_name": "Hack & Slash",
+  "event_desc": "Coding Competition",
+  "event_rules": "General Rules",
+  "event_date": "2025-03-03",
+  "event_time": "19:04",
+  "event_venue": "MCA Lab 2",
+  "registration_fees": "200",
+  "event_limit": 1,
+  "upi_id": "akhilrockbabu@slc",
+  "status": "live",
+  "event_organizer": "rockiey",
+  "form_data": {
+    "Department": "text"
+  },
+  "event_coupon": "mace",
+  "event_discount": "25",
+  "event_poster": "../img/events_posters/Hack___Slash_1740738915.jpg",
+  "co-organizers": [
+    "rock"
+  ]
+}]

@@ -1,0 +1,11 @@
+[{
+  "_id": {
+    "$oid": "67c190cb31a765bbb20ee595"
+  },
+  "username": "rockiey",
+  "name": "Akhil Rock Babu",
+  "email": "m23ca011@mace.ac.in",
+  "phone": "1234567890",
+  "department": "MCA",
+  "InstitutionID": "uploads/org_institution_ID/67c190cb398a6.jpg"
+}]

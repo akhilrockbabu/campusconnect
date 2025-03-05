@@ -1,0 +1,44 @@
+[{
+  "_id": {
+    "$oid": "67c5430d0be92d95ab042405"
+  },
+  "page": "home",
+  "program_date": {
+    "value": "28 Feb - 3 Mar,2024",
+    "font": "'Roboto', sans-serif",
+    "color": "#ccff00",
+    "size": "30"
+  },
+  "program_name1": {
+    "value": "MACE",
+    "font": "'Monoton', cursive",
+    "color": "#d20404",
+    "size": "120"
+  },
+  "program_name2": {
+    "value": "Takshak 2025",
+    "font": "'Monoton', cursive",
+    "color": "#c9e208",
+    "size": "120"
+  },
+  "college_name": {
+    "value": "Mar Athanasius College of Engineering",
+    "font": "'Anton', sans-serif",
+    "color": "#ffffff",
+    "size": "30"
+  },
+  "about_program": {
+    "value": "As Mar Athanasius College of Engineering rekindles the spirit of its renowned national technological festival, Takshak'24, we stand on the brink of an extraordinary celebration of ingenuity and innovation. We aim to ignite your curiosity with thought-provoking talks, an extensive array of exhibitions, a spectacular motor show, and an exhilarating exchange of ideas as tech enthusiasts from diverse backgrounds come together.                                It is a testament to the simple wonders of life and honours the common bond between the branches within our college and the general public. We open our doors to young engineers from across the nation, offering a platform to ignite their scientific passion with the vast array of knowledge on display. As we prepare to unveil the 17th edition of Takshak, it promises to be a vibrant tapestry, interweaving the brilliance of future innovation with the charm of vintage nostalgia.",
+    "font": "'Anton', sans-serif",
+    "color": "#ffffff",
+    "size": "20"
+  },
+  "college_link": {
+    "value": "https://www.mace.ac.in/",
+    "font": "'Roboto', sans-serif",
+    "color": "#e90c0c",
+    "size": "20"
+  },
+  "home_img_path": "uploads/home_img/background_1741167077.png",
+  "logo_img_path": "uploads/logo_img/logo_1741165468.png"
+}]

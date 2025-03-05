@@ -101,6 +101,7 @@ $events = $eventsCollection->find([
                 <th>Action</th>
                 <th>View Registrations</th>
                 <th>Delete</th>
+                <th>Add</th>
             </tr>
         </thead>
         <tbody>
@@ -129,6 +130,12 @@ $events = $eventsCollection->find([
                         <form method="POST" style="display:inline;" action="delete_event.php" onsubmit="confirmDelete(event)">
                             <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
                             <button type="submit" name="action" value="" class="btn btn-danger">Delete Event</button>    
+                        </form>
+                    </td>
+                    <td data-th='View Registrations'>
+                        <form method="POST" style="display:inline;" action="add_co-organizers.php">
+                            <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
+                            <button type="submit" name="action" value="" class="btn btn-success">Add Co-Organizers</button>    
                         </form>
                     </td>
                 </tr>

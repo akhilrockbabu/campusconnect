@@ -36,6 +36,103 @@ $college_link = $home['college_link']['value'];
 $college_link_font = $home['college_link']['font'];
 $college_link_color = $home['college_link']['color'];
 $college_link_size = $home['college_link']['size'];
+
+$home_img_path = $home['home_img_path'];
+$logo_img_path = $home['logo_img_path'];
+
+
+// Handle image upload
+$uploadedImagePath = '../uploads/logo_img/default_logo.png'; // Default image path
+$client = new Client("mongodb://localhost:27017");
+$db = $client->campusconnect;
+$interfaceCollection = $db->interface; // Collection to store interface customization
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['image'])) {
+    $targetDir = "../uploads/logo_img/";
+    
+    // Ensure the directory exists
+    if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0777, true);
+    }
+
+    // Validate file type
+    $fileType = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+    if ($fileType !== 'png') {
+        echo "<script>alert('Only PNG files are allowed.');</script>";
+        exit;
+    }
+
+    // Validate image dimensions (250 x 150)
+    list($width, $height) = getimagesize($_FILES['image']['tmp_name']);
+    if ($width >250 || $height > 150) {
+        echo "<script>alert('Please upload an image with dimensions less than 250 x 150 px.');</script>";
+        exit;
+    }
+
+    // Generate unique file name
+    $fileName = "logo_" . time() . ".png";
+    $targetFilePath = $targetDir . $fileName;
+    $dbFilePath = "uploads/logo_img/" . $fileName; // Path to store in DB
+
+    // Move file to the directory
+    if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
+        $uploadedImagePath = $dbFilePath;
+
+        // Update MongoDB with the new image path
+        $interfaceCollection->updateOne(
+            ['_id' => new MongoDB\BSON\ObjectId('67c5430d0be92d95ab042405')],
+            ['$set' => ['logo_img_path' => $uploadedImagePath]]
+        );
+    } else {
+        echo "<script>alert('Image upload failed. Please try again.');</script>";
+    }
+    header("Location: ".$_SERVER['PHP_SELF']);
+}
+
+
+
+// Handle background image upload
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['bg_image'])) {
+    $bgTargetDir = "../uploads/home_img/";
+
+    // Ensure the directory exists
+    if (!is_dir($bgTargetDir)) {
+        mkdir($bgTargetDir, 0777, true);
+    }
+
+    // Validate file type
+    $bgFileType = strtolower(pathinfo($_FILES['bg_image']['name'], PATHINFO_EXTENSION));
+    if ($bgFileType !== 'png') {
+        echo "<script>alert('Only PNG files are allowed.');</script>";
+        exit;
+    }
+
+    // Validate image dimensions (1920 x 900)
+    list($bgWidth, $bgHeight) = getimagesize($_FILES['bg_image']['tmp_name']);
+    if ($bgWidth !== 1920 || $bgHeight !== 900) {
+        echo "<script>alert('Image must be 1920 x 900 pixels.');</script>";
+        exit;
+    }
+
+    // Generate unique file name
+    $bgFileName = "background_" . time() . ".png";
+    $bgTargetFilePath = $bgTargetDir . $bgFileName;
+    $bgDbFilePath = "uploads/home_img/" . $bgFileName; // Path to store in DB
+
+    // Move file to the directory
+    if (move_uploaded_file($_FILES['bg_image']['tmp_name'], $bgTargetFilePath)) {
+        // Update MongoDB with the new background image path
+        $interfaceCollection->updateOne(
+            ['_id' => new MongoDB\BSON\ObjectId('67c5430d0be92d95ab042405')],
+            ['$set' => ['home_img_path' => $bgDbFilePath]]
+        );
+        header("Location: ".$_SERVER['PHP_SELF']);
+
+    } else {
+        echo "<script>alert('Background image upload failed. Please try again.');</script>";
+    }
+}
+
 ?>
 
 <!doctype html>
@@ -102,6 +199,9 @@ $college_link_size = $home['college_link']['size'];
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 999;
         }
+        .slider_bg_1 {
+             background-image: url('<?php echo '../'.htmlspecialchars($home_img_path, ENT_QUOTES, 'UTF-8'); ?>');
+             }
     </style>
 </head>
 
@@ -119,9 +219,23 @@ $college_link_size = $home['college_link']['size'];
                         <div class="row align-items-center">
                             <div class="col-xl-3 col-lg-3">
                                 <div class="logo">
-                                    <a href="index.html"></a>
-                                        <img src="../img/logo.png" alt="">
-                                    </a>
+                                    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                                        <img id="uploadImage" src="<?php echo '../'.htmlspecialchars($logo_img_path, ENT_QUOTES, 'UTF-8'); ?>" 
+                                            alt="Click to upload image" style="cursor: pointer; width: 117px; height: 45px;">
+                                        <input type="file" id="imageInput" name="image" style="display: none;" accept="image/png">
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6">
+                                <form id="bgUploadForm" method="POST" enctype="multipart/form-data" style="display: none;">
+                                    <input type="file" id="bgImageInput" name="bg_image" accept="image/png">
+                                </form>
+                                <div class="main-menu  d-none d-lg-block">
+                                    <nav>
+                                        <ul id="navigation">
+                                            <li><a href="#" id="changeBgBtn">Change the background Image</a></li>
+                                        </ul>
+                                    </nav>
                                 </div>
                             </div>
                             <div class="col-12">
@@ -338,6 +452,51 @@ $college_link_size = $home['college_link']['size'];
                 });
             });
         });
+
+        document.getElementById('uploadImage').addEventListener('click', function() {
+        document.getElementById('imageInput').click();
+    });
+
+    document.getElementById('imageInput').addEventListener('change', function() {
+        const file = this.files[0];
+
+        if (file) {
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = function() {
+                if (this.width <= 250 && this.height <= 150) {
+                    document.getElementById('uploadForm').submit();
+                } else {
+                    alert("Please upload an image with dimensions less than 250 x 150 px.");
+                    document.getElementById('imageInput').value = ""; // Clear input
+                }
+            };
+        }
+    });
+
+
+    document.getElementById('changeBgBtn').addEventListener('click', function() {
+    document.getElementById('bgImageInput').click();
+});
+
+document.getElementById('bgImageInput').addEventListener('change', function() {
+    const file = this.files[0];
+
+    if (file) {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        img.onload = function() {
+            if (this.width === 1920 && this.height === 900) {
+                document.getElementById('bgUploadForm').submit();
+            } else {
+                alert("Please upload an image with dimensions 1920 x 900 px.");
+                document.getElementById('bgImageInput').value = ""; // Clear input
+            }
+        };
+    }
+});
+
+
     </script>
 </body>
 

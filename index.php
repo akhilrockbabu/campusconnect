@@ -37,6 +37,9 @@ $college_link = $home['college_link']['value'];
 $college_link_font = $home['college_link']['font'];
 $college_link_color = $home['college_link']['color'];
 $college_link_size = $home['college_link']['size'];
+
+$home_img_path = $home['home_img_path'];
+$logo_img_path = $home['logo_img_path'];
 ?>
 
 <!doctype html>
@@ -67,6 +70,12 @@ $college_link_size = $home['college_link']['size'];
 
     <link rel="stylesheet" href="css/style.css">
     <!-- <link rel="stylesheet" href="css/responsive.css"> -->
+
+    <style type="text/css">
+        .slider_bg_1 {
+             background-image: url('<?php echo htmlspecialchars($home_img_path, ENT_QUOTES, 'UTF-8'); ?>');
+             }
+    </style>
 </head>
 
 <body>
@@ -84,7 +93,7 @@ $college_link_size = $home['college_link']['size'];
                             <div class="col-xl-3 col-lg-3">
                                 <div class="logo">
                                     <a href="index.html"></a>
-                                        <img src="img/logo.png" alt="">
+                                        <img src="<?php echo htmlspecialchars($logo_img_path, ENT_QUOTES, 'UTF-8'); ?>" alt="">
                                     </a>
                                 </div>
                             </div>

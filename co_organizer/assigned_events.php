@@ -7,7 +7,7 @@ use MongoDB\BSON\ObjectId;
 
 session_start();
 
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'organizer') {
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'co-organizer') {
     header("Location: log_reg.html");
     exit();
 }
@@ -32,9 +32,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch all approved or hold events for the logged-in organizer
+// Fetch all approved, hold, or live events for the logged-in co-organizer
 $events = $eventsCollection->find([
-    'event_organizer' => $organizerUsername,
+    'co-organizers' => $organizerUsername,
     'status' => ['$in' => ['approved', 'hold', 'live']]
 ]);
 
@@ -98,11 +98,7 @@ $events = $eventsCollection->find([
                 <th>Event Name</th>
                 <th>Description</th>
                 <th>Date</th>
-                <th>Live/Hold</th>
                 <th>View Registrations</th>
-                <th>Add Co-Organizers</th>
-                <th>Remove Co-Organizers</th>
-                <th>Delete Event</th>
             </tr>
         </thead>
         <tbody>
@@ -111,45 +107,17 @@ $events = $eventsCollection->find([
                     <td data-th='Event Name' style="width: auto; white-space: nowrap;"><?php echo htmlspecialchars($event['event_name']); ?></td>
                     <td data-th='Description' style="width: auto; white-space: nowrap;"><?php echo htmlspecialchars($event['event_desc']); ?></td>
                     <td data-th='Date' style="width: auto; white-space: nowrap;"><?php echo htmlspecialchars($event['event_date']); ?></td>
-                    <td data-th='Action'>
-                        <form method="POST" style="display:inline;">
-                            <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
-                            <?php if ($event['status'] === 'live'): ?>
-                                <button type="submit" name="action" value="make_hold" class="btn btn-danger">Make it hold</button>
-                            <?php else: ?>
-                                <button type="submit" name="action" value="make_live" class="btn btn-success">Make it live</button>
-                            <?php endif; ?>
-                        </form>
-                    </td>
                     <td data-th='View Registrations'>
                         <form method="POST" style="display:inline;" action="manage_registerations.php">
                             <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
                             <button type="submit" name="action" value="" class="btn btn-success">View Registrations</button>    
                         </form>
                     </td>
-                    <td data-th='View Registrations'>
-                        <form method="POST" style="display:inline;" action="add_co-organizers.php">
-                            <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
-                            <button type="submit" name="action" value="" class="btn btn-success">Add Co-Organizers</button>    
-                        </form>
-                    </td>
-                    <td data-th='View Registrations'>
-                        <form method="POST" style="display:inline;" action="remove_co-organizers.php">
-                            <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
-                            <button type="submit" name="action" value="" class="btn btn-danger">Remove Co-Organizers</button>    
-                        </form>
-                    </td>
-                    <td data-th='Delete'>
-                        <form method="POST" style="display:inline;" action="delete_event.php" onsubmit="confirmDelete(event)">
-                            <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
-                            <button type="submit" name="action" value="" class="btn btn-danger">Delete Event</button>    
-                        </form>
-                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table><br><br>
-    <button type="button" onclick="window.location.href='organizer81118.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>
+    <button type="button" onclick="window.location.href='coOrganizer2002.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>
 </div>
 </body>
 </html>

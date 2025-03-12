@@ -120,7 +120,7 @@ $eventsCollection = $db->events;
                 </div>
             </div>
             <?php
-                $events = $eventsCollection->find(['status' => 'live']);
+                $events = $eventsCollection->find(['status' => 'live', 'event_limit' => ['$gt' => '0']]);
                 $eventCount = 0;
                 foreach ($events as $event) {
                     $eventPosterPath = preg_replace('/^\.\.\//', '', $event['event_poster']);

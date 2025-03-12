@@ -4,6 +4,8 @@ require '../vendor/autoload.php';
 
 use MongoDB\Client;
 use MongoDB\BSON\ObjectId;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 session_start();
 
@@ -15,17 +17,17 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'organizer') {
 $client = new Client("mongodb://localhost:27017");
 $db = $client->campusconnect;
 $coOrganizersCollection = $db->co_organizers;
+$organizerCollection = $db->organizers;
 $usersCollection = $db->users;
 $eventsCollection = $db->events;
+$organizer = $organizerCollection->findOne(['username' => $_SESSION['username']]);
+$organizerEmail = $organizer['email'];
 $eventId = $_POST['event_id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_co_organizer'])) {
     $email = trim($_POST['email']);
-    $username = trim($_POST['username']);
     $name = trim($_POST['name']);
     $phone = trim($_POST['phone']);
-    $password = trim($_POST['password']);
-    $confirmPassword = trim($_POST['confirmPassword']);
 
     $errorMessages = [];
 
@@ -34,11 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_co_organizer'])) 
         $errorMessages[] = "Email is required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errorMessages[] = "Invalid email format.";
-    }
-
-    // Validate username
-    if (empty($username)) {
-        $errorMessages[] = "Username is required.";
     }
 
     // Validate name
@@ -53,19 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_co_organizer'])) 
         $errorMessages[] = "Phone number must be 10 digits.";
     }
 
-    // Validate password
-    if (empty($password)) {
-        $errorMessages[] = "Password is required.";
-    } elseif (strlen($password) < 8) {
-        $errorMessages[] = "Password must be at least 8 characters.";
-    }
-
-    // Validate confirm password
-    if ($password !== $confirmPassword) {
-        $errorMessages[] = "Passwords do not match.";
-    }
-
     if (empty($errorMessages)) {
+        // Generate random username and password
+        $username = bin2hex(random_bytes(5)); // 10 characters
+        $password = bin2hex(random_bytes(4)); // 8 characters
+
         // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -90,9 +79,83 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_co_organizer'])) 
             ['$addToSet' => ['co-organizers' => $username]]
         );
 
-        echo "<script>alert('Co-Organizer added successfully.');</script>";
+        // Fetch event name
+        $event = $eventsCollection->findOne(['_id' => new ObjectId($eventId)]);
+        $eventName = $event['event_name'];
+
+        // Send email
+        $mail = new PHPMailer(true);
+        try {
+            //Server settings
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
+            $mail->SMTPAuth = true;
+            $mail->Username = 'campusconnect.events@gmail.com'; // SMTP username
+            $mail->Password = 'cuut pyiw rrqh feub'; // SMTP password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            //Recipients
+            $mail->setFrom($organizerEmail, 'Campus Connect');
+            $mail->addAddress($email);
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = 'You have been added as a Co-Organizer';
+            $mail->Body    = "You have been added as a co-organizer for the event $eventName. <br> Login credentials: <br> Username: $username <br> Password: $password";
+
+            $mail->send();
+            echo "<script>alert('Co-Organizer added successfully and email sent.');</script>";
+        } catch (Exception $e) {
+            echo "<script>alert('Co-Organizer added successfully but email could not be sent. Mailer Error: {$mail->ErrorInfo}');</script>";
+        }
     } else {
         echo "<script>alert('" . implode("\\n", $errorMessages) . "');</script>";
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_existing_co_organizer'])) {
+    $selectedUsername = trim($_POST['existing_co_organizer']);
+
+    // Fetch co-organizer details
+    $coOrganizer = $coOrganizersCollection->findOne(['username' => $selectedUsername]);
+    $coOrganizerEmail = $coOrganizer['email'];
+
+    // Update events collection to add co-organizer
+    $eventsCollection->updateOne(
+        ['_id' => new ObjectId($eventId)],
+        ['$addToSet' => ['co-organizers' => $selectedUsername]]
+    );
+
+    // Fetch event name
+    $event = $eventsCollection->findOne(['_id' => new ObjectId($eventId)]);
+    $eventName = $event['event_name'];
+
+    // Send email
+    $mail = new PHPMailer(true);
+    try {
+        //Server settings
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com'; // Set the SMTP server to send through
+        $mail->SMTPAuth = true;
+        $mail->Username = 'campusconnect.events@gmail.com'; // SMTP username
+        $mail->Password = 'cuut pyiw rrqh feub'; // SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        //Recipients
+        $mail->setFrom($organizerEmail, 'Campus Connect');
+        $mail->addAddress($coOrganizerEmail);
+
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'You have been added as a Co-Organizer';
+        $mail->Body    = "You have been added as a co-organizer for the event $eventName.";
+
+        $mail->send();
+        echo "<script>alert('Existing Co-Organizer added successfully and email sent.');</script>";
+    } catch (Exception $e) {
+        echo "<script>alert('Existing Co-Organizer added successfully but email could not be sent. Mailer Error: {$mail->ErrorInfo}');</script>";
     }
 }
 ?>
@@ -121,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_co_organizer'])) 
             width: 350px;
             text-align: center;
         }
-        input, button {
+        input, button, select {
             width: 75%;
             padding: 10px;
             margin-top: 10px;
@@ -143,11 +206,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_co_organizer'])) 
 <script>
 function validateForm() {
     const email = document.getElementById("email").value.trim();
-    const username = document.getElementById("username").value.trim();
     const name = document.getElementById("name").value.trim();
     const phone = document.getElementById("phone").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
     let errorMessages = [];
 
@@ -156,10 +216,6 @@ function validateForm() {
         errorMessages.push("Email is required.");
     } else if (!emailPattern.test(email)) {
         errorMessages.push("Invalid email format.");
-    }
-
-    if (!username) {
-        errorMessages.push("Username is required.");
     }
 
     if (!name) {
@@ -172,16 +228,6 @@ function validateForm() {
         errorMessages.push("Phone number must be 10 digits.");
     }
 
-    if (!password) {
-        errorMessages.push("Password is required.");
-    } else if (password.length < 8) {
-        errorMessages.push("Password must be at least 8 characters.");
-    }
-
-    if (password !== confirmPassword) {
-        errorMessages.push("Passwords do not match.");
-    }
-
     if (errorMessages.length > 0) {
         alert(errorMessages.join("\n"));
         return false;
@@ -192,17 +238,29 @@ function validateForm() {
 </script>
 
 <div class="container">
-    <h2>Add Co-Organizer</h2>
+    <h2>Add New Co-Organizer</h2>
     <form id="signupForm" action="" method="POST" onsubmit="return validateForm()">
         <input type="hidden" name="add_co_organizer" value="1">
         <input type="hidden" name="event_id" value="<?php echo htmlspecialchars($eventId); ?>">
         <input type="text" id="email" name="email" placeholder="Enter the email">
-        <input type="text" id="username" name="username" placeholder="Create a username">
         <input type="text" id="name" name="name" placeholder="Enter the Name">
         <input type="number" id="phone" name="phone" placeholder="Enter the Phone Number">
-        <input type="password" id="password" name="password" placeholder="Create a password">
-        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm the password">
         <button type="submit">Add Co-Organizer</button>
+    </form>
+    <br>
+    <h2>Add Existing Co-Organizer</h2>
+    <form id="existingCoOrganizerForm" action="" method="POST">
+        <input type="hidden" name="add_existing_co_organizer" value="1">
+        <input type="hidden" name="event_id" value="<?php echo htmlspecialchars($eventId); ?>">
+        <select name="existing_co_organizer" id="existing_co_organizer">
+            <?php
+            $coOrganizers = $coOrganizersCollection->find();
+            foreach ($coOrganizers as $coOrganizer) {
+                echo '<option value="' . htmlspecialchars($coOrganizer['username']) . '">' . htmlspecialchars($coOrganizer['username']) . '</option>';
+            }
+            ?>
+        </select>
+        <button type="submit">Add Existing Co-Organizer</button>
     </form>
     <br>
     <a href="approved_events.php"><button>Back</button></a>

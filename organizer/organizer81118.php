@@ -1,11 +1,23 @@
 <?php
 session_start();
 
+require '../vendor/autoload.php';
+
+use MongoDB\Client;
+use MongoDB\BSON\ObjectId;
+
+
+$client = new Client("mongodb://localhost:27017");
+$db = $client->campusconnect;
+$organizerCollection = $db->organizers;
+
+
 if (!isset($_SESSION['username']) || $_SESSION['role']!='organizer') {
     header("Location: log_reg.html");
     exit();
 }
 $username = $_SESSION['username'];
+$organizer = $organizerCollection->findOne(['username' => $username]);
 ?>
 
 <!DOCTYPE html>
@@ -149,7 +161,7 @@ $username = $_SESSION['username'];
             <nav class="navbar">
                 <a href="create_event.php"><button class="nav-btn" id="dashboardBtn">Create Events</button></a>
                 <a href="approved_events.php"><button class="nav-btn" id="dashboardBtn">Approved Events</button></a>
-                <button class="nav-btn" id="settingsBtn">Update Profile</button>
+                <a href="updateProfile.php"><button class="nav-btn" id="dashboardBtn">Update Profile</button></a>
                 <!-- <button class="nav-btn" id="notificationsBtn">Manage Participants</button> -->
                 <a href="../logout.php"><button class="nav-btn" id="dashboardBtn">Logout</button></a>
             </nav>
@@ -158,8 +170,9 @@ $username = $_SESSION['username'];
 
     <div class="main-content">
         <section class="section">
-            <h2>Welcome, <?php echo htmlspecialchars($username); ?>!</h2>
-            <p>Organizer Panel</p>
+            <h2>Welcome, <?php echo htmlspecialchars($organizer['name']); ?>!</h2>
+            <p>Organizer Dashboard</p>
+            <p>Choose an option from the top navigation bar to get started.</p>
         </section>
     </div>
 

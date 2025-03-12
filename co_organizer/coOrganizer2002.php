@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 require '../vendor/autoload.php';
 
 use MongoDB\Client;
@@ -8,14 +9,15 @@ use MongoDB\BSON\ObjectId;
 
 $client = new Client("mongodb://localhost:27017");
 $db = $client->campusconnect;
-$adminCollection = $db->admin;
+$coOrganizerCollection = $db->co_organizers;
 
-if (!isset($_SESSION['username']) || $_SESSION['role']!='admin') {
-    header("Location: ../log_reg.html");
+
+if (!isset($_SESSION['username']) || $_SESSION['role']!='co-organizer') {
+    header("Location: log_reg.html");
     exit();
 }
 $username = $_SESSION['username'];
-$admin = $adminCollection->findOne(['username' => $username]);
+$coOrganizer = $coOrganizerCollection->findOne(['username' => $username]);
 ?>
 
 <!DOCTYPE html>
@@ -157,11 +159,9 @@ $admin = $adminCollection->findOne(['username' => $username]);
                 <h1>CampusConnect</h1>
             </div>
             <nav class="navbar">
-                <a href="manage_organizers.php"><button class="nav-btn" id="dashboardBtn">Manage Organizers</button></a>
-                <a href="manage_events.php"><button class="nav-btn" id="dashboardBtn">Manage Events</button></a>
-                <a href="customize_home.php"><button class="nav-btn" id="dashboardBtn">Customize Interface</button></a>
+                <a href="assigned_events.php"><button class="nav-btn" id="dashboardBtn">Assigned Events</button></a>
                 <a href="updateProfile.php"><button class="nav-btn" id="dashboardBtn">Update Profile</button></a>
-                <button class="nav-btn" id="notificationsBtn">Manage Participants</button>
+                <!-- <button class="nav-btn" id="notificationsBtn">Manage Participants</button> -->
                 <a href="../logout.php"><button class="nav-btn" id="dashboardBtn">Logout</button></a>
             </nav>
         </div>
@@ -169,8 +169,8 @@ $admin = $adminCollection->findOne(['username' => $username]);
 
     <div class="main-content">
         <section class="section">
-            <h2>Welcome, <?php echo htmlspecialchars($admin['name']); ?>!</h2>
-            <p>Admin Dashboard</p>
+            <h2>Welcome, <?php echo htmlspecialchars($coOrganizer['name']); ?>!</h2>
+            <p>Co-Organizer Dashboard</p>
             <p>Choose an option from the top navigation bar to get started.</p>
         </section>
     </div>

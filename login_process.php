@@ -42,17 +42,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                     sendAlertAndRedirect("You are not approved yet ! You will recieve an email once approved. Kindly be patient.");
                 }
             } 
-            elseif ($user['role'] === 'co_organizer')
+            elseif ($user['role'] === 'co-organizer')
             {
-                if ($user['status'] === 'approved') 
-                {
-                    header("Location: coOrganizer/coOrganizer2002.php");
-                    exit();
-                } 
-                else 
-                {
-                    sendAlertAndRedirect("You are not approved yet ! You will recieve an email once approved. Kindly be patient.");
-                }
+                header("Location: co_organizer/coOrganizer2002.php");
+                exit();
             } 
             else 
             {

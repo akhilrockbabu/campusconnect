@@ -7,7 +7,7 @@ use MongoDB\BSON\ObjectId;
 
 session_start();
 
-if (!isset($_SESSION['username']) || $_SESSION['role'] != 'organizer') {
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'co-organizer') {
     header("Location: ../log_reg.html");
     exit();
 }
@@ -98,7 +98,7 @@ $participants = $participantsCollection->find(['event_id' => new ObjectId($_POST
         <p>No participants found for this event.</p>
     <?php endif; ?>
 
-    <button type="button" onclick="window.location.href='approved_events.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>
+    <button type="button" onclick="window.location.href='assigned_events.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>
 
 </div>
 

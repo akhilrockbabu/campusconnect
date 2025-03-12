@@ -65,51 +65,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ];
 
     try {
-        $serverStatusCursor = $client->admin->command(['serverStatus' => 1]);
-        $serverStatus = current($serverStatusCursor->toArray());
-        $isReplicaSet = isset($serverStatus['repl']) && $serverStatus['repl']['setName'];
-
-        if ($isReplicaSet) {
-            $session = $client->startSession();
-            $session->startTransaction();
-
-            try {
-                $usersResult = $usersCollection->insertOne($userData, ['session' => $session]);
-                $organizersResult = $organizersCollection->insertOne($organizerData, ['session' => $session]);
-
-                if ($usersResult->getInsertedCount() === 1 && $organizersResult->getInsertedCount() === 1) {
-                    $session->commitTransaction();
-                    echo "<script>alert('Registration successful.'); window.location.href = 'log_reg.html';</script>";
-                } else {
-                    $session->abortTransaction();
-                    echo "<script>alert('Registration failed.'); window.location.href = 'log_reg.html';</script>";
-                }
-            } catch (MongoDB\Driver\Exception\DuplicateKeyException $e) {
-                $session->abortTransaction();
-                echo "<script>alert('Username or Email already exists!'); window.location.href = 'log_reg.html';</script>";
-            } catch (Exception $e) {
-                $session->abortTransaction();
-                echo "<script>alert('Error: " . $e->getMessage() . "'); window.location.href = 'log_reg.html';</script>";
-            } finally {
-                $session->endSession();
-            }
-        } else {
-            // Non-transactional approach for standalone MongoDB servers
+        $organizersResult = $organizersCollection->insertOne($organizerData);
+        if ($organizersResult->getInsertedCount() === 1) 
+        {
             $usersResult = $usersCollection->insertOne($userData);
-            $organizersResult = $organizersCollection->insertOne($organizerData);
-
-            if ($usersResult->getInsertedCount() === 1 && $organizersResult->getInsertedCount() === 1) {
+            if ($usersResult->getInsertedCount() === 1) 
+            {
                 echo "<script>alert('Registration successful.'); window.location.href = 'log_reg.html';</script>";
-            } else {
-                echo "<script>alert('Registration failed.'); window.location.href = 'log_reg.html';</script>";
             }
         }
-    } catch (MongoDB\Driver\Exception\DuplicateKeyException $e) {
-        echo "<script>alert('Username or Email already exists!'); window.location.href = 'log_reg.html';</script>";
-    } catch (Exception $e) {
-        echo "<script>alert('Error: " . $e->getMessage() . "'); window.location.href = 'log_reg.html';</script>";
+        else
+        {
+            echo "<script>alert('Registration failed.'); window.location.href = 'log_reg.html';</script>";
+        }
     }
-} else {
+    catch (MongoDB\Driver\Exception\DuplicateKeyException $e)
+    {
+        echo "<script>alert('Username or Email already exists!'); window.location.href = 'log_reg.html';</script>";
+    }
+    catch (Exception $e)
+    {
+        echo "<script>alert('Username or Email already exists!'); window.location.href = 'log_reg.html';</script>";
+    }
+}
+    else
+    {
     echo "<script>alert('Invalid request method.'); window.location.href = 'log_reg.html';</script>";
 }
 ?>

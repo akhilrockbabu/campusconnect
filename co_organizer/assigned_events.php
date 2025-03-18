@@ -8,7 +8,7 @@ use MongoDB\BSON\ObjectId;
 session_start();
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'co-organizer') {
-    header("Location: log_reg.html");
+    header("Location: ../log_reg.html");
     exit();
 }
 
@@ -91,7 +91,7 @@ $events = $eventsCollection->find([
 <body>
 
 <div class="container mt-5">
-    <h2>Approved Events</h2>
+    <h1>Assigned Events</h1><br>
     <table class="rwd-table">
         <thead>
             <tr>

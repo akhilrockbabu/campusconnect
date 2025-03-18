@@ -5,7 +5,7 @@ require '../vendor/autoload.php';
 $client = new Client("mongodb://localhost:27017");
 
 if (!isset($_SESSION['username']) || $_SESSION['role']!='organizer') {
-    header("Location: log_reg.html");
+    header("Location: ../log_reg.html");
     exit();
 }
 $username = $_SESSION['username'];

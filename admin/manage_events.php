@@ -10,7 +10,7 @@ use MongoDB\BSON\ObjectId;
 session_start();
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
-    header("Location: log_reg.html");
+    header("Location: ../log_reg.html");
     exit();
 }
 
@@ -135,7 +135,7 @@ $approved_events = $eventsCollection->find([
 </head>
 <body>
 <div class="container mt-5">
-    <h2>Manage Pending Events</h2>
+    <h1>Manage Pending Events</h1><br>
     <table class="rwd-table">
         <thead>
             <tr>
@@ -182,7 +182,7 @@ $approved_events = $eventsCollection->find([
 </div>
 
 <div class="container mt-5">
-    <h2>Manage Approved Events</h2>
+    <h1>Manage Approved Events</h1><br>
     <table class="rwd-table">
         <thead>
             <tr>

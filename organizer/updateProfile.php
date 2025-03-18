@@ -216,11 +216,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             </div>
                         </div>
-                        <div class="p-t-15">
                             <button class="btn btn--radius-2 btn--blue" type="submit">Update</button>
-                            <button class="btn btn-success"><a href="admin6096.php">Back to Home</a></button>
-                        </div>
-                    </form>
+                    </form><br><br>
+                    <button class="btn btn-success"><a href="organizer81118.php">Back to Home</a></button>
                 </div>
             </div>
         </div>

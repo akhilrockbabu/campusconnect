@@ -10,7 +10,7 @@ use MongoDB\BSON\ObjectId;
 session_start();
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] != 'organizer') {
-    header("Location: log_reg.html");
+    header("Location: ../log_reg.html");
     exit();
 }
 

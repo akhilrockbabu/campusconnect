@@ -91,8 +91,8 @@ $events = $eventsCollection->find([
 <body>
 
 <div class="container mt-5">
-    <h2>Approved Events</h2>
-    <table class="rwd-table">
+    <h1>Approved Events</h1><br>
+    <table class="rwd-table" align="center">
         <thead>
             <tr>
                 <th>Event Name</th>

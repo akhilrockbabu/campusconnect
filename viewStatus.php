@@ -12,7 +12,7 @@ $db = $client->campusconnect;
 $participantsCollection = $db->participants;
 $eventsCollection = $db->events;
 
-$email = $_POST['email'] ?? '';
+$email = $_POST['email'] ?? $_GET['email'] ?? '';
 
 $participants = [];
 if ($email) {
@@ -59,6 +59,31 @@ if ($email) {
             border: 1px solid #ccc;
             text-align: center;
         }
+
+        .btn-enabled {
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-enabled:hover {
+            background-color: darkgreen;
+        }
+
+        .btn-disabled {
+            background-color: grey;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -75,6 +100,7 @@ if ($email) {
                     <th>Event Time</th>
                     <th>Status</th>
                     <th>View Ticket</th>
+                    <th>Submit Feedback</th>
                 </tr>
             </thead>
             <tbody>
@@ -87,7 +113,7 @@ if ($email) {
                         <td data-th='Event Description'><?php echo htmlspecialchars($event['event_desc']); ?></td>
                         <td data-th='Event Venue'><?php echo htmlspecialchars($event['event_venue']); ?></td>
                         <td data-th='Event Date'><?php echo htmlspecialchars($event['event_date']); ?></td>
-                        <td data-th= 'Event Time'><?php echo DateTime::createFromFormat('H:i', $event['event_time'])->format('h:i A'); ?></td>
+                        <td data-th='Event Time'><?php echo DateTime::createFromFormat('H:i', $event['event_time'])->format('h:i A'); ?></td>
                         <?php if($participant['status']=='approved'): ?>
                             <td data-th='Status' style='color:lightgreen'>Approved</td>
                         <?php elseif($participant['status']=='pending'): ?>
@@ -105,24 +131,40 @@ if ($email) {
                                 <input type="hidden" name="event_time" value="<?php echo htmlspecialchars($event['event_time']); ?>">
                                 <input type="hidden" name="participant_name" value="<?php echo htmlspecialchars($participant['name']); ?>">
                                 <input type="hidden" name="participant_id" value="<?php echo htmlspecialchars($participant['_id']); ?>">
-                                <button type="submit" class="btn btn-primary">View Ticket</button>
+                                <button type="submit" class="btn btn-enabled">View Ticket</button>
                             </form>
                         </td>
                         <?php }
                         else{?>
                             <td data-th='View Ticket'>
-                                <button type="button" class="btn btn-primary" disabled>View Ticket</button>
+                                <button type="button" class="btn btn-disabled" disabled>View Ticket</button>
                             </td>
-                        <?php } ?>
+                        <?php }
+                        if($participant['status']=='approved'){ ?>
+                        <td data-th='Submit Feedback'>
+                            <form action="feedback.php" method="post">
+                                <input type="hidden" name="event_name" value="<?php echo htmlspecialchars($event['event_name']); ?>">
+                                <input type="hidden" name="participant_name" value="<?php echo htmlspecialchars($participant['name']); ?>">
+                                <input type="hidden" name="participant_email" value="<?php echo htmlspecialchars($participant['email']); ?>">
+                                <button type="submit" class="btn btn-enabled">Submit Feedback</button>
+                            </form>
+                        </td>
+                        <?php }
+                        else{?>
+                            <td data-th='Submit Feedback'>
+                                <button type="button" class="btn btn-disabled" disabled>Submit Feedback</button>
+                            </td>
+                        <?php }
+                        ?>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table><br><br>
     <?php else: ?>
-        <p>No participants found for this email.</p>
+        <p>No Registrations found for this email.</p>
     <?php endif; ?>
 
-    <button type="button" onclick="window.location.href='checkstatus.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>
+    <button type="button" onclick="window.location.href='checkstatus.php'" class="btn btn-primary">Back</button>
 
 </div>
 

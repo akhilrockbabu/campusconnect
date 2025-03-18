@@ -41,6 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $body = "Your event '{$event['event_name']}' has been rejected. Reason: $reason";
     }
 
+
+    if ($action === 'make_live') {
+        $eventsCollection->updateOne(['_id' => new ObjectId($eventId)], ['$set' => ['status' => 'live']]);
+    } elseif ($action === 'make_hold') {
+        $eventsCollection->updateOne(['_id' => new ObjectId($eventId)], ['$set' => ['status' => 'hold']]);
+    }
+
     // Send email to organizer
     $mail = new PHPMailer(true);
     try {
@@ -70,6 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Fetch all pending events
 $events = $eventsCollection->find(['status' => 'pending']);
+
+
+$approved_events = $eventsCollection->find([
+    'status' => ['$in' => ['approved', 'hold', 'live']]
+]);
 
 ?>
 
@@ -113,10 +125,17 @@ $events = $eventsCollection->find(['status' => 'pending']);
             text-align: center;
         }
     </style>
+    <script>
+        function confirmDelete(event) {
+            if (!confirm("Deleting this event may delete the event details and registration details entirely from the database. Think twice before you do.")) {
+                event.preventDefault();
+            }
+        }
+    </script>
 </head>
 <body>
 <div class="container mt-5">
-    <h2>Manage Events</h2>
+    <h2>Manage Pending Events</h2>
     <table class="rwd-table">
         <thead>
             <tr>
@@ -154,6 +173,53 @@ $events = $eventsCollection->find(['status' => 'pending']);
                             <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
                             <input type="text" name="reason" placeholder="Reason for rejection" style="margin-top: 10px; display:block; color: red;" required>
                             <button type="submit" name="action" value="reject" class="btn btn-danger">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table><br><br>
+</div>
+
+<div class="container mt-5">
+    <h2>Manage Approved Events</h2>
+    <table class="rwd-table">
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Live/Hold</th>
+                <th>View Registrations</th>
+                <th>Delete Event</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($approved_events as $event): ?>
+                <tr>
+                    <td data-th='Event Name' style="width: auto; white-space: nowrap;"><?php echo htmlspecialchars($event['event_name']); ?></td>
+                    <td data-th='Description' style="width: auto; white-space: nowrap;"><?php echo htmlspecialchars($event['event_desc']); ?></td>
+                    <td data-th='Date' style="width: auto; white-space: nowrap;"><?php echo htmlspecialchars($event['event_date']); ?></td>
+                    <td data-th='Action'>
+                        <form method="POST" style="display:inline;">
+                            <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
+                            <?php if ($event['status'] === 'live'): ?>
+                                <button type="submit" name="action" value="make_hold" class="btn btn-danger">Make it hold</button>
+                            <?php else: ?>
+                                <button type="submit" name="action" value="make_live" class="btn btn-success">Make it live</button>
+                            <?php endif; ?>
+                        </form>
+                    </td>
+                    <td data-th='View Registrations'>
+                        <form method="POST" style="display:inline;" action="manage_registerations.php">
+                            <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
+                            <button type="submit" name="action" value="" class="btn btn-success">View Registrations</button>    
+                        </form>
+                    </td>
+                    <td data-th='Delete'>
+                        <form method="POST" style="display:inline;" action="delete_event.php" onsubmit="confirmDelete(event)">
+                            <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
+                            <button type="submit" name="action" value="" class="btn btn-danger">Delete Event</button>    
                         </form>
                     </td>
                 </tr>

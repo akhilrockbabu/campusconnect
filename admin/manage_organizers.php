@@ -8,7 +8,7 @@ use MongoDB\Client;
 
 session_start();
 
-if (!isset($_SESSION['username']) || $_SESSION['role']!='admin') {
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
     header("Location: log_reg.html");
     exit();
 }
@@ -97,11 +97,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Remove the user from the database if rejected
         $usersCollection->deleteOne(['username' => $targetUsername]);
+        $organizersCollection->deleteOne(['username' => $targetUsername]);
         $message = 'Organizer has been rejected and removed from the system.';
+    } elseif ($action === 'Hold') {
+        // Update the user status to hold
+        $usersCollection->updateOne(['username' => $targetUsername], ['$set' => ['status' => 'pending']]);
+        $message = 'Organizer has been put on hold.';
     }
 
     // Redirect back to the manage organizers page with a message
-    //header("Location: manage_organizers.php?message=" . urlencode($message));
     header("Location: manage_organizers.php");
     exit();
 }
@@ -123,13 +127,31 @@ foreach ($pendingOrganizers as $organizer) {
         ];
     }
 }
+
+// Fetch all organizers with approved status
+$approvedOrganizers = $usersCollection->find(['role' => 'organizer', 'status' => 'approved']);
+
+$approvedDocuments = [];
+foreach ($approvedOrganizers as $organizer) {
+    $username = $organizer['username'];
+    $organizerDetails = $organizersCollection->findOne(['username' => $username]);
+    if ($organizerDetails) {
+        $approvedDocuments[] = [
+            'username' => $username,
+            'name' => $organizerDetails['name'],
+            'email' => $organizerDetails['email'],
+            'institution_id' => $organizerDetails['InstitutionID'],
+            'department' => $organizerDetails['department']
+        ];
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Manage Organizers</title>
+    <title>Organizers Management</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -168,7 +190,7 @@ foreach ($pendingOrganizers as $organizer) {
 </head>
 <body>
 <div class="container">
-    <h1>Manage Organizers</h1><br>
+    <h1>Pending Organizers</h1><br>
 
     <!-- Display success or failure message -->
     <?php if (isset($_GET['message'])): ?>
@@ -214,6 +236,47 @@ foreach ($pendingOrganizers as $organizer) {
             ?>
         </tbody>
     </table><br><br>
+
+    <h1>Existing Organizers</h1><br>
+
+    <table class="rwd-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Institution ID</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            foreach ($approvedDocuments as $doc) {
+                echo "<tr>";
+                echo "<td data-th='Name'>" . htmlspecialchars($doc['name']) . "</td>";
+                echo "<td data-th='Email'>" . htmlspecialchars($doc['email']) . "</td>";
+                echo "<td data-th='Department'>" . htmlspecialchars($doc['department']) . "</td>";
+                echo "<td data-th='Document Preview'>";
+                echo "<img src='../" . htmlspecialchars($doc['institution_id']) . "' alt='Document Preview' class='img-preview' onclick='toggleImageSize(this)'>";
+                echo "</td>";
+                echo "<td>";
+                echo "<form method='POST' style='display:inline;'>";
+                echo "<input type='hidden' name='target_username' value='" . htmlspecialchars($doc['username']) . "'>";
+                echo "<button type='submit' name='action' value='Hold' class='btn btn-warning'>Hold</button>";
+                echo "</form>";
+                echo "<br><br>";
+                echo "<form method='POST' style='display:inline;'>";
+                echo "<input type='hidden' name='target_username' value='" . htmlspecialchars($doc['username']) . "'>";
+                echo "<textarea name='rejection_reason' required placeholder='Reason for rejection' style='margin-top: 10px; display:block; color: red;'></textarea>";
+                echo "<button type='submit' name='action' value='Reject' class='btn btn-danger'>Reject</button>";
+                echo "</form>";
+                echo "</td>";
+                echo "</tr>";
+            }
+            ?>
+        </tbody>
+    </table><br><br>
+
     <button type="button" onclick="window.location.href='admin6096.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>
 
 </div>

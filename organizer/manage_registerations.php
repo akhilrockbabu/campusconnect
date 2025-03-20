@@ -62,6 +62,7 @@ $participants = $participantsCollection->find(['event_id' => new ObjectId($_POST
 <body>
 <div class="container">
     <h1>Manage Registrations</h1><br>
+    <br><br>
     <?php if (!empty($participants)): ?>
         <table class="rwd-table">
             <thead>
@@ -97,6 +98,14 @@ $participants = $participantsCollection->find(['event_id' => new ObjectId($_POST
     <?php else: ?>
         <p>No participants found for this event.</p>
     <?php endif; ?>
+    <form method="POST" action="generate_reg_report.php" style="display:inline;">
+        <input type="hidden" name="event_id" value="<?php echo htmlspecialchars($_POST['event_id']); ?>">
+        <button type="submit" class="btn btn-primary" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Generate Participants Report</button><br><br>
+    </form>
+    <form method="POST" action="generate_inc_report.php" style="display:inline;">
+        <input type="hidden" name="event_id" value="<?php echo htmlspecialchars($_POST['event_id']); ?>">
+        <button type="submit" class="btn btn-primary" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Generate Income Report</button><br><br>
+    </form>
 
     <button type="button" onclick="window.location.href='approved_events.php'" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 20px; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease;">Back</button>
 

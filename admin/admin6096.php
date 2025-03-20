@@ -238,6 +238,7 @@ $events = $eventsCollection->find(['status' => ['$in' => ['approved','live','hol
                 <a href="viewFeedback.php"><button class="nav-btn" id="dashboardBtn">View Feedbacks</button></a>
                 <a href="customize_home.php"><button class="nav-btn" id="dashboardBtn">Customize Interface</button></a>
                 <a href="updateProfile.php"><button class="nav-btn" id="dashboardBtn">Update Profile</button></a>
+                <a href="pushNotification.php"><button class="nav-btn" id="dashboardBtn">Push Notification</button></a>
                 <a href="../logout.php"><button class="nav-btn" id="dashboardBtn">Logout</button></a>
             </nav>
         </div>

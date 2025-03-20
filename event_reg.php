@@ -66,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     $participantData['InstitutionID'] = $imagePath;
+    $participantData['timestamp'] = date('Y-m-d H:i:s');
 
     // Handle file upload for Payment Proof
     if (isset($_FILES['PaymentProof']) && $_FILES['PaymentProof']['error'] == 0) {
@@ -94,6 +95,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $participantData['PaymentProof'] = $paymentProofPath;
     $participantData['status'] = 'pending';
 
+    // Calculate discounted amount if promo code is valid
+    $promoCode = $_POST['promo'] ?? '';
+    $eventCoupon = $event['event_coupon'] ?? '';
+    $eventDiscount = $event['event_discount'] ?? 0;
+    $registrationFees = $event['registration_fees'] ?? 0;
+
+    if ($promoCode === $eventCoupon) {
+        $discountedAmount = $registrationFees - ($registrationFees * ($eventDiscount / 100));
+    } else {
+        $discountedAmount = $registrationFees;
+    }
+    $participantData['amount'] = $discountedAmount;
 
     // Insert participant data into the collection
     try {
@@ -170,6 +183,10 @@ function validateForm() {
 
     if (!name) {
         errorMessages.push("Name is required.");
+    }
+
+    if (!college_name) {
+        errorMessages.push("College Name is required.");
     }
 
     if (!phone) {
@@ -251,6 +268,15 @@ function validatePromoCode() {
                                 <div class="input-group">
                                     <label class="label">Email ID</label>
                                     <input class="input--style-4" type="email" id="email" name="email" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row row-space">
+                            <div class="col-2">
+                                <div class="input-group">
+                                    <label class="label">College Name</label>
+                                    <input class="input--style-4" type="text" id="college_name" name="college_name" required>
                                 </div>
                             </div>
                         </div>

@@ -107,6 +107,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['form_action']) && $_P
                 </div>
             </div>
             <div class="form-group row">
+                <label class="col-sm-2 col-form-label">College Name</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="field_label_phone" value="Collge Name" readonly>
+                </div>
+            </div>
+            <div class="form-group row">
                 <label class="col-sm-2 col-form-label">Institution ID Proof</label>
                 <div class="col-sm-4">
                     <input type="text" class="form-control" name="field_label_institution_id" value="Institution ID Proof" readonly>

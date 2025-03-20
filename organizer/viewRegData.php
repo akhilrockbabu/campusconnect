@@ -19,6 +19,7 @@ $db = $client->campusconnect;
 $participantsCollection = $db->participants;
 $organizerCollection = $db->organizers;
 $eventsCollection = $db->events;
+$paymentsCollection = $db->payments;
 
 // Fetch organizer email using the username in session variable
 $organizerUsername = $_SESSION['username'];
@@ -41,6 +42,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($action === 'Approve') {
         // Update the participant status
         $participantsCollection->updateOne(['_id' => new ObjectId($participantId)], ['$set' => ['status' => 'approved']]);
+
+        // Insert into payments collection
+        $paymentsCollection->insertOne([
+            'email' => $participant['email'],
+            'event_id' => $participant['event_id'],
+            'name' => $participant['name'],
+            'phone' => $participant['phone'],
+            'amount' => $participant['amount'],
+            'timestamp' => $participant['timestamp']
+        ]);
+        
 
         // Send email notification
         $mail = new PHPMailer(true);
@@ -104,14 +116,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
         // Update the participant status to rejected
         $participantsCollection->updateOne(['_id' => new ObjectId($participantId)], ['$set' => ['status' => 'rejected']]);
-        $eventsCollection->updateOne(['_id' => new ObjectId($event_id)],  ['$inc' => ['event_limit' => 1]] ); 
+        $eventsCollection->updateOne(['_id' => new ObjectId($event_id)],  ['$inc' => ['event_limit' => 1]] );
 
+        // Delete the record from payments collection
+        $paymentsCollection->deleteOne(['email' => $participantEmail, 'event_id' => $event_id]);
     }
 
     // Redirect back to the manage registrations page with a message
     echo "<form id='redirectForm' method='POST' action='manage_registerations.php'>
             <input type='hidden' name='event_id' value='" . htmlspecialchars($participant['event_id']) . "'>
-                      </form>
+          </form>
           <script type='text/javascript'>
               document.getElementById('redirectForm').submit();
           </script>";

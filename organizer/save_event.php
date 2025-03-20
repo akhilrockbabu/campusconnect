@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'event_date' => $_POST['event_date'],
         'event_time' => $_POST['event_time'],
         'event_venue' => $_POST['event_venue'],
-        'registration_fees' => $_POST['registration_fees'],
+        'registration_fees' => intval($_POST['registration_fees']),
         'event_limit' => intval($_POST['event_limit']),
         'upi_id' => $_POST['upi_id'],
         'status' => 'pending',

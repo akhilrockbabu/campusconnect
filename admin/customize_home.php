@@ -201,7 +201,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['bg_image'])) {
         }
         .slider_bg_1 {
              background-image: url('<?php echo '../'.htmlspecialchars($home_img_path, ENT_QUOTES, 'UTF-8'); ?>');
-             }
+        }
+        
+        /* Guide modal styles */
+        .guide-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 5px;
+            padding: 25px;
+            width: 80%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 1001;
+            color: #333;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .guide-modal h3 {
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .guide-modal .section {
+            margin-bottom: 20px;
+        }
+        
+        .guide-modal .section h4 {
+            color: #ff5e13;
+            margin-bottom: 10px;
+        }
+        
+        .guide-modal .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .guide-modal .close-btn:hover {
+            color: #ff5e13;
+        }
+        
+        .guide-btn {
+            background-color: #ff5e13;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 50px;
+            height: 50px;
+            transition: background-color 0.3s;
+        }
+        
+        .guide-btn:hover {
+            background-color: #e04500;
+        }
     </style>
 </head>
 
@@ -234,6 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['bg_image'])) {
                                     <nav>
                                         <ul id="navigation">
                                             <li><a href="#" id="changeBgBtn">Change the background Image</a></li>
+                                            <li><a href="#" id="showGuideBtn" class="guide-btn">guide</a></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -368,6 +434,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['bg_image'])) {
         </form>
     </div>
 
+    <!-- Guide Modal -->
+    <div class="guide-modal" id="guideModal">
+        <span class="close-btn" id="closeGuideBtn">&times;</span>
+        <h3>Page Customization Guide</h3>
+        
+        <div class="section">
+            <h4>Text Customization</h4>
+            <p>Click on any text element in the page to edit:</p>
+            <ul>
+                <li>Program Date: Click to change the date, font, color, and size</li>
+                <li>Program Name: Edit the name of your program</li>
+                <li>College Name: Update your institution's name</li>
+                <li>About Program: Modify the program description</li>
+                <li>College Link: Change the website URL</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h4>Image Customization</h4>
+            <ul>
+                <li><strong>Logo:</strong> Click on the logo in the top left corner to upload a new logo image
+                    <ul>
+                        <li>Requirements: PNG format, max dimensions 250 x 150 pixels</li>
+                    </ul>
+                </li>
+                <li><strong>Background Image:</strong> Click the "Change the background Image" button in the navigation
+                    <ul>
+                        <li>Requirements: PNG format, exact dimensions 1920 x 900 pixels</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h4>Editing Process</h4>
+            <ol>
+                <li>Click on any text element to open the edit popup</li>
+                <li>Modify the text content in the Value field</li>
+                <li>Select font, color, and size as desired</li>
+                <li>Click "Update" to save your changes</li>
+            </ol>
+        </div>
+        
+        <div class="section">
+            <h4>Tips</h4>
+            <ul>
+                <li>All changes are saved immediately to the database</li>
+                <li>Preview changes by refreshing the page after saving</li>
+                <li>Make sure image dimensions match the required specifications</li>
+            </ul>
+        </div>
+    </div>
+
     <!-- JS here -->
     <script src="../js/vendor/modernizr-3.5.0.min.js"></script>
     <script src="../js/vendor/jquery-1.12.4.min.js"></script>
@@ -399,6 +518,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['bg_image'])) {
 
     <script>
         $(document).ready(function() {
+            // Existing code for editable elements
             $('.editable').on('click', function() {
                 var field = $(this).data('field');
                 var value = $(this).data('value');
@@ -451,52 +571,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['bg_image'])) {
                     }
                 });
             });
+            
+            // Guide modal functionality
+            $('#showGuideBtn').on('click', function(e) {
+                e.preventDefault();
+                $('.popup-overlay').show();
+                $('#guideModal').show();
+            });
+            
+            $('#closeGuideBtn').on('click', function() {
+                $('#guideModal').hide();
+                $('.popup-overlay').hide();
+            });
         });
 
         document.getElementById('uploadImage').addEventListener('click', function() {
-        document.getElementById('imageInput').click();
-    });
+            document.getElementById('imageInput').click();
+        });
 
-    document.getElementById('imageInput').addEventListener('change', function() {
-        const file = this.files[0];
+        document.getElementById('imageInput').addEventListener('change', function() {
+            const file = this.files[0];
 
-        if (file) {
-            const img = new Image();
-            img.src = URL.createObjectURL(file);
-            img.onload = function() {
-                if (this.width <= 250 && this.height <= 150) {
-                    document.getElementById('uploadForm').submit();
-                } else {
-                    alert("Please upload an image with dimensions less than 250 x 150 px.");
-                    document.getElementById('imageInput').value = ""; // Clear input
-                }
-            };
-        }
-    });
-
-
-    document.getElementById('changeBgBtn').addEventListener('click', function() {
-    document.getElementById('bgImageInput').click();
-});
-
-document.getElementById('bgImageInput').addEventListener('change', function() {
-    const file = this.files[0];
-
-    if (file) {
-        const img = new Image();
-        img.src = URL.createObjectURL(file);
-        img.onload = function() {
-            if (this.width === 1920 && this.height === 900) {
-                document.getElementById('bgUploadForm').submit();
-            } else {
-                alert("Please upload an image with dimensions 1920 x 900 px.");
-                document.getElementById('bgImageInput').value = ""; // Clear input
+            if (file) {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                img.onload = function() {
+                    if (this.width <= 250 && this.height <= 150) {
+                        document.getElementById('uploadForm').submit();
+                    } else {
+                        alert("Please upload an image with dimensions less than 250 x 150 px.");
+                        document.getElementById('imageInput').value = ""; // Clear input
+                    }
+                };
             }
-        };
-    }
-});
+        });
 
 
+        document.getElementById('changeBgBtn').addEventListener('click', function() {
+            document.getElementById('bgImageInput').click();
+        });
+
+        document.getElementById('bgImageInput').addEventListener('change', function() {
+            const file = this.files[0];
+
+            if (file) {
+                const img = new Image();
+                img.src = URL.createObjectURL(file);
+                img.onload = function() {
+                    if (this.width === 1920 && this.height === 900) {
+                        document.getElementById('bgUploadForm').submit();
+                    } else {
+                        alert("Please upload an image with dimensions 1920 x 900 px.");
+                        document.getElementById('bgImageInput').value = ""; // Clear input
+                    }
+                };
+            }
+        });
     </script>
 </body>
 

@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_co_organizer']
 </head>
 <body>
 <div class="container mt-5">
-    <h2>Co-Organizers for Event: <?php echo htmlspecialchars($event['event_name'] ?? ''); ?></h2>
+    <h1>Co-Organizers for Event: <?php echo htmlspecialchars($event['event_name'] ?? ''); ?></h1><br>
     <table class="rwd-table">
         <thead>
             <tr>

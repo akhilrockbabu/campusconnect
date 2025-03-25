@@ -43,7 +43,7 @@ $events = $eventsCollection->find([
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
     <title>Manage Organizers</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -51,6 +51,50 @@ $events = $eventsCollection->find([
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/table_style.css">
     <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1500px; /* Increased max-width to accommodate wider tables */
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .rwd-table {
+            margin: 0 auto;
+            width: 100%;
+            text-align: center;
+        }
+
+        .rwd-table th, 
+        .rwd-table td {
+            text-align: center !important;
+        }
+
+        h1 {
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .rwd-table {
+                font-size: 12px;
+            }
+        }
+
+        /* Existing styles from previous version */
         .img-preview {
             width: 50px;
             height: 50px;
@@ -61,23 +105,8 @@ $events = $eventsCollection->find([
             transition: transform 0.3s ease-in-out;
         }
 
-        .img-preview.large {
-            width: 500px;
-            height: 500px;
-            z-index: 1000;
-            position: relative;
-        }
-
         button:hover {
-        background-color: #0056b3;
-        }
-
-        .message {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            text-align: center;
+            background-color: #0056b3;
         }
     </style>
     <script>
@@ -92,7 +121,7 @@ $events = $eventsCollection->find([
 
 <div class="container mt-5">
     <h1>Approved Events</h1><br>
-    <table class="rwd-table" align="center">
+    <table class="rwd-table">
         <thead>
             <tr>
                 <th>Event Name</th>
@@ -108,9 +137,9 @@ $events = $eventsCollection->find([
         <tbody>
             <?php foreach ($events as $event): ?>
                 <tr>
-                    <td data-th='Event Name' style="width: auto; white-space: nowrap;"><?php echo htmlspecialchars($event['event_name']); ?></td>
-                    <td data-th='Description' style="width: auto; white-space: nowrap;"><?php echo htmlspecialchars($event['event_desc']); ?></td>
-                    <td data-th='Date' style="width: auto; white-space: nowrap;"><?php echo htmlspecialchars($event['event_date']); ?></td>
+                    <td data-th='Event Name'><?php echo htmlspecialchars($event['event_name']); ?></td>
+                    <td data-th='Description'><?php echo htmlspecialchars($event['event_desc']); ?></td>
+                    <td data-th='Date'><?php echo htmlspecialchars($event['event_date']); ?></td>
                     <td data-th='Action'>
                         <form method="POST" style="display:inline;">
                             <input type="hidden" name="event_id" value="<?php echo $event['_id']; ?>">
